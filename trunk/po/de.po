@@ -1,0 +1,119 @@
+# German language file for gRun
+# Copyright (C) 1999 Southern Gold Development
+# Dominik Brettnacher <domi@saargate.de>, 1999.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: gRun 0.9.2\n"
+"POT-Creation-Date: 1999-02-06 15:28+0200\n"
+"PO-Revision-Date: 1999-02-06 13:54+0200\n"
+"Last-Translator: Dominik Brettnacher <domi@saargate.de>\n"
+"Language-Team: Dominik Brettnacher <domi@saargate.de>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=CHARSET\n"
+"Content-Transfer-Encoding: ENCODING\n"
+
+#: grun.c:838
+msgid "Choose Application"
+msgstr "Programm auswählen"
+
+#: grun.c:912
+msgid ""
+"gRun launches applications under X\n"
+"\n"
+"Usage grun [options] [file options]\n"
+"\n"
+"   file options     Launch file directly, no dialog boxes\n"
+"   --persist        Dialog persistance\n"
+"   --preload file   Load file as default command\n"
+"   --notips         Disable tooltips\n"
+"   --version        Show version\n"
+"   --help           Show this guide \n"
+"\n"
+"Copyright Southern Gold Development 1998\n"
+msgstr ""
+"gRun startet Applikationen unter X\n"
+"\n"
+"Benutzung: grun [optionen] [dateioptionen]\n"
+"\n"
+"   Dateioptionen    Starte Datei direkt ohne Dialoge\n"
+"   --persist        Dialog wird nicht beendet\n"
+"   --preload datei  Lade datei als Standardkommando\n"
+"   --notips         Tooltips deaktivieren\n"
+"   --version        Version anzeigen\n"
+"   --help           Diese Hilfe anzeigen\n"
+"\n"
+"Copyright Southern Gold Development 1998\n"
+
+#: grun.c:916
+#, c-format
+msgid ""
+"gRun version %s\n"
+"\n"
+"Copyright Southern Gold Development 1998\n"
+msgstr ""
+"gRun version %s\n"
+"\n"
+"Copyright Southern Gold Development 1998\n"
+
+#: grun.c:968 grun.c:969
+#, c-format
+msgid "gRun %s"
+msgstr "gRun %s"
+
+#: grun.c:987
+msgid "Launch Application"
+msgstr "Starte Programm"
+
+#: grun.c:1023
+msgid "OK"
+msgstr "OK"
+
+#: grun.c:1027
+msgid "Launch application"
+msgstr "Starte Programm"
+
+#: grun.c:1027
+msgid "The OK button launches the application given in the entry box"
+msgstr "Der OK-Button startet das im Eingabefeld angegebene Programm"
+
+#: grun.c:1031
+msgid "Close"
+msgstr "Schliessen"
+
+#: grun.c:1034
+msgid "Cancel"
+msgstr "Abbrechen"
+
+#: grun.c:1041
+msgid "Close gRun"
+msgstr "gRun schliessen"
+
+#: grun.c:1041
+msgid "The Close button will close the persistant gRun window"
+msgstr "Der Schliessen-Button schliesst das verbleibende gRun-Fenster"
+
+#: grun.c:1044
+msgid "Cancel launch"
+msgstr "Abbrechen"
+
+#: grun.c:1044
+msgid "The Cancel button cancels the launch process and closes gRun"
+msgstr "Der Abbrechen-Button bricht den Dialog und gRun ab"
+
+#: grun.c:1048
+msgid "Browse"
+msgstr "Durchsuchen"
+
+#: grun.c:1052
+msgid "Browse for command"
+msgstr "nach Kommando durchsuchen"
+
+#: grun.c:1052
+msgid ""
+"The Browse button opens a file selection box so the user can browse for the "
+"command to launch"
+msgstr ""
+"Der Durchsuchen-Button öffnet ein Dateiauswahl-Dialogfeld, mit dem der "
+"Benutzer das auszuführende Kommando suchen kann"

@@ -1,0 +1,15 @@
+Fatal
+
+Annoying
+
+Under Gtk 1.1.2, and possibly 1.1.1 and 1.1.0, Tab is trapped and
+signal propogation stopped by the combobox itself before it gets
+to our handler. Thus using Tab to complete the command from the
+system PATH directories doesn't work. On Gtk 1.1.3 and above this
+is fixed, they use Mod1+Tab, and the functionality is restored.
+The Escape key has also been assigned to the PATH complete, so
+use that if Tab doesn't work.
+
+If a command has an embedded space in the actual command, which should
+be escaped, gRun splits it at the space and tries to launch the
+fragment. Must try catch escaped chars.
