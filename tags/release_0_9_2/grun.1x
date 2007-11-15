@@ -1,0 +1,61 @@
+.TH GRUN 1x "Jan 15, 1999" "gRun Version 0.9.22"
+.SH NAME
+gRun \- X/GTK based application launcher.
+.SH SYNOPSIS
+\fBgRun\fP [\fIfilename\fP] [-v] [--version] [-h] [--help]
+.SH DESCRIPTION
+\fBgRun\fP launches applications in X Windows without the need for an \fBxterm\fP session at all. \fBgRun\fP provides three methods
+of launching applications, entering the command directly into the text field, browsing the tree for the application and running an
+application specified on the command line. In all cases \fBgRun\fP exits completely after launching the application and the
+application is left running as a full child of the X process, as if it were launched from a WM menu. If \fBgRun\fP is launched from
+an \fBxterm\fP or shell, the shell will be freed for further use after \fBgRun\fP exits. No more wasting an \fBxterm\fP for the duration
+of the application.
+.P
+\fBgRun\fP will attempt to complete a command automatically from the history as it is typed in, hopefully saving some time. Pressing
+the Tab key will try to find an executable file in the path that starts with the characters already entered into the entry box.
+.P
+\fBgRun\fP also includes a facility for checking if the command is in a list of console mode apps, eg \fBtelnet\fP. If it finds the
+command in the file, \fBgRun\fP launches a \fBxterm\fP with the command as the \fB-e\fP parameter.
+.P
+\fBgRun\fP now has a facility for associating file extensions with a command, ala Windows. If an extension is found, the associated
+application is launched with the command entry as the parameter.
+.SS Options
+.TP
+\fIfilename\fR
+Application name for command line launching from a \fBxterm\fP. The filename must exist within either the default path or have
+a fully qualified path. Any options passed after the filename are passed down to the application if not removed by gtk_init()
+.TP
+\fB--persist\fP
+\fBgRun\fP dialog does not close after launching application
+.TP
+\fB--notips\fP
+Tooltips are not displayed
+.TP
+\fB--version\fP
+Display the current version number of \fBgrun\fP.
+.TP
+\fB--help\fP
+Display a short usage guide.
+.TP
+\fBgRun\fP also recognizes all standard X Windows and GTK options, eg \fB-display\fP and \fB-geometry\fP.
+.SH Bugs
+None currently known.
+.SH AUTHOR
+Bruce A. Smith <tangomanrulz@geocities.com>
+.SH COPYING
+Copyright (C) 1998,1999
+ Bruce A. Smith <tangomanrulz@geocities.com>
+
+This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 2 of the License, or
+(at your option) any later version.
+ This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+ You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+
+

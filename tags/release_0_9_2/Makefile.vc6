@@ -1,0 +1,57 @@
+########################################################
+## Makefile for building grun.exe with MSVC6
+## Use: nmake -f makefile.vc6 [release | debug]
+##      (default is release)
+##
+## Comments to: Troy Engel <tengel@sonic.net>
+
+## Adjust these to your machine:
+
+# path to <glib.h>
+GLIB = ..\glib
+
+# path to <gtk/gtk.h>
+GTK = ..\gtk-plus
+
+# paths to .lib for gtk, gdk and glib
+GLIBPATHR = ..\lib_release
+GLIBPATHD = ..\lib_debug
+
+########################################################
+## Nothing more to do below this line!
+
+## Release
+CCR = cl.exe /ML /O2 /D "NDEBUG"
+LINKR = link.exe /incremental:no /libpath:$(GLIBPATHR)
+
+## Debug
+CCD = cl.exe /MLd /Gm /ZI /Od /D "_DEBUG" /GZ
+LINKD = link.exe /incremental:yes /debug /libpath:$(GLIBPATHD)
+
+CFLAGS = /nologo /W3 /GX /D "WIN32" /D "_WINDOWS" /D "_MBCS" /YX /FD /c -I$(GLIB) -I$(GTK)
+LFLAGS = /nologo /out:grun.exe /subsystem:windows /machine:I386
+LINKLIBS = kernel32.lib glib-1.1.lib gdk-1.1.lib gtk-1.1.lib
+
+all : release
+
+release: grunr.obj
+	$(LINKR) $(LFLAGS) $(LINKLIBS) grun.obj
+
+debug: grund.obj
+	$(LINKD) $(LFLAGS) $(LINKLIBS) grun.obj
+
+grunr.obj : grun.c
+	$(CCR) $(CFLAGS) grun.c
+
+grund.obj : grun.c
+	$(CCD) $(CFLAGS) grun.c
+
+clean:
+	del grun.exe
+	del grun.obj
+	del grun.pdb
+	del grun.ilk
+	del vc60.idb
+	del vc60.pdb
+	del vc60.pch
+
