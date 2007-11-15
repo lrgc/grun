@@ -1,0 +1,102 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR Free Software Foundation, Inc.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"POT-Creation-Date: 1999-02-06 13:34+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=CHARSET\n"
+"Content-Transfer-Encoding: ENCODING\n"
+
+#: grun.c:834
+msgid "Choose Application"
+msgstr ""
+
+#: grun.c:908
+msgid ""
+"gRun launches applications under X\n"
+"\n"
+"Usage grun [options] [file options]\n"
+"\n"
+"   file options     Launch file directly, no dialog boxes\n"
+"   --persist        Dialog persistance\n"
+"   --preload file   Load file as default command\n"
+"   --notips         Disable tooltips\n"
+"   --version        Show version\n"
+"   --help           Show this guide \n"
+"\n"
+"Copyright Southern Gold Development 1998\n"
+msgstr ""
+
+#: grun.c:912
+#, c-format
+msgid ""
+"gRun version %s\n"
+"\n"
+"Copyright Southern Gold Development 1998\n"
+msgstr ""
+
+#: grun.c:964 grun.c:965
+#, c-format
+msgid "gRun %s"
+msgstr ""
+
+#: grun.c:983
+msgid "Launch Application"
+msgstr ""
+
+#: grun.c:1019
+msgid "OK"
+msgstr ""
+
+#: grun.c:1023
+msgid "Launch application"
+msgstr ""
+
+#: grun.c:1023
+msgid "The OK button launches the application given in the entry box"
+msgstr ""
+
+#: grun.c:1027
+msgid "Close"
+msgstr ""
+
+#: grun.c:1030
+msgid "Cancel"
+msgstr ""
+
+#: grun.c:1037
+msgid "Close gRun"
+msgstr ""
+
+#: grun.c:1037
+msgid "The Close button will close the persistant gRun window"
+msgstr ""
+
+#: grun.c:1040
+msgid "Cancel launch"
+msgstr ""
+
+#: grun.c:1040
+msgid "The Cancel button cancels the launch process and closes gRun"
+msgstr ""
+
+#: grun.c:1044
+msgid "Browse"
+msgstr ""
+
+#: grun.c:1048
+msgid "Browse for command"
+msgstr ""
+
+#: grun.c:1048
+msgid ""
+"The Browse button opens a file selection box so the user can browse for the "
+"command to launch"
+msgstr ""

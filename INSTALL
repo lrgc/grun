@@ -1,0 +1,28 @@
+Basic install instructions
+
+Should work for all GTK versions above 1.0.1,
+tested on 1.0.6, 1.1.2, 1.1.7, 1.1.9, 1.1.11 and 1.1.14
+
+Note: There was a memory allocation bug in GTK 1.1.6, this affected
+all GTK apps. Upgrade to 1.1.7.
+Note: In GTK 1.1.11, there is a small bug in the entry widget that
+causes the first letter highlighted to be the wrong color. This has
+been fixed in 1.1.13 and above.
+
+Run the following to build grun
+
+	./configure
+	make
+	make install
+
+That should do it. Stick a menu item in your favourite WM for it
+and launch away.
+
+To use the console mode tester, append --enable-testfile to the
+configure command line, and to change the xterm executable name,
+add --with-default-xterm=xterm as well.
+
+To use the file associations, append --enable-associations to the
+configure commmand line.
+
+Bruce Smith <tangomanrulz@geocities.com>

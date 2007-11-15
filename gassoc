@@ -1,0 +1,14 @@
+# This is the file association database for grun 0.8pre1
+jpg:xv
+jpeg:xv
+gif:xv
+xpm:xv
+bmp:xv
+xcf:gimp
+html:netscape
+htm:netscape
+pdf:xpdf
+mov:xanim
+avi:xanim
+qt:xanim
+ps:ghostview

@@ -1,0 +1,159 @@
+gRun news
+
+31 January 1999
+
+Switched to gettext for i18n
+	Using gettext for i18n in gRun because of better configurabilty and
+	ease of use.
+
+15 January 1999
+
+Added command preload
+	This option, a command line parameter --preload, loads whatever follows
+	on the command line into the entry box as the default command.
+
+12 January 1999
+
+Added absolute path completion
+	If the first character of the command in the entry box is a / when
+	Tab/Esc/F2 is pressed, gRun will complete the command as an absolute
+	path. The command fragment will be split at the last / in the string,
+	a / appended to the path split and the end fragment searched for in
+	that directory. 
+
+11 January 1999
+
+Released version 0.8.1
+   This is a bug fix release which fixes a bug whereby gRun exits if a
+   parameter not removed by GTK or recognized by gRun is given. Also the
+   console mode test code now works on FQPN's. Also the Cancel button
+   is now a Close button if using --persist
+
+Development version released - 0.9.0
+	The first release of the new development tree is now released. This
+	tree is assumed to be unstable at all times and care should be taken
+	when using it. Changes include an attempt to create a multi-national
+	release. On the TODO list for 0.9 is regular expression support.
+
+4 January 1998
+
+Released version 0.8.0
+	0.8 is a stable release branch and only bugfixes will be incorporated
+	into the branch. The next development release will be 0.9.1, if we
+	can find other features to implement.
+
+27 December 1998
+
+Released version 0.8pre1
+	0.8pre1 is the first prerelease of gRun. This release will become
+	version 0.8 if no bugs are found. Please submit bug reports as
+	soon as possible. 
+
+Tooltips added
+	Tooltips for the OK, Cancel and Browse buttons have been implemented.
+	Private tips are already defined, but aren't available yet.
+
+gassoc extended
+	More entries have been added to gassoc. Type covered now include
+	PostScript, 
+
+17 December 1998
+
+Global locations for gassoc and consfile
+	gRun checks if the .gassoc and .consfile, for associations and
+	console mode apps respectively, exist in the user's home dir and
+	then loads a global copy stored in /usr/local/share/grun if either
+	file isn't found. This allow sys-admins to maintain a system wide
+	database of associations and console modes apps.
+
+16 December 1998
+
+Added file associations
+	gRun now checks if a file is executable and if it isn't,
+	tries to find a matching extension assocation and launches
+	that app. This is not compiled by default as the associations
+	file needs to be manually installed. This does not work for
+	the command line yet. 
+
+December 9 1998
+	
+Switched to config.h for #defines
+	Switched over to config.h for #defines since the compiler
+	command line was getting too long.
+
+December 8 1998
+
+Added console mode app support.
+	If gRun finds the command in a file listing console mode apps,
+	eg telnet or ftp, it fires the app off inside an Xterm of your
+	choice. A small file list is distributed with the release and
+	should be copied to HOME/.consfile on Unix.
+
+Added persitance of the dialog
+	If gRun is started with --persist or -p, the dialog won't close
+	after the command is run. It will remain open allowing you to
+	run more applications. The only way to close gRun is but using
+	the WM kill button or the Cancel button. This has added a status
+	byte to the sgrun struct. Bit 7 used for persitance flag.
+
+Dropped short command line switches
+	Only the long switches are recognized now. Anyone got complaints?
+
+December 7 1998
+
+Added last command recall
+	gRun now recalls the last new command from the top of the
+	history list into the combobox, selected and all that jazz.
+
+Fixed several Win32 bugs
+	Autocomplete now works under Win32. Other bugs associated with
+	the keypresses also fixed. A Makefile for VC6 is now distributed
+	with the release.
+
+December 1  1998
+
+Added command autocompletion from history
+	gRun now tries to complete the command as it is being typed
+	in, ala Communicator 4 on Windows. It finds the first match
+	in the history for the characters already typed in and inserts
+	the text into the EntryBox. The added section is selected so
+	that the next keystroke can delete it if it is wrong
+
+Added command completion from directory PATH
+	When you hit the Tab key, gRun now tries to complete the command
+	from the executable PATH directories. It finds the first filename
+	in the PATH that starts with the characters already typed in and
+	inserts it into the EntryBox, doing the same selection story
+	as for history complete.
+
+November 29 1998
+
+Added Win32 support (Troy Engel <tengel@sonic.net>
+	Troy ported gRun to Win32 as an alternative to Start/Run.
+	Now we're getting somewhere. The code needs a bit of work
+	according to Troy, but it launches the apps correctly
+	using CreateProcess() and uses Tor Lillqvists' GTK port.
+
+November 26 1998
+
+Changed from Motif to GTK
+	Changed over to GTK from Motif because it has a nicer
+	look, is more powerful and has features I needed. 	
+
+Changed name to gRun
+	Changed the name from xmrun to gRun for obvious reasons
+
+Implemented history
+	gRun now stores all previous commands that were successful
+
+Using fork() and execvp() for launching
+	Now using dual fork() and execvp() to launch the application
+	instead of system() for better control of launch and because
+	using system() under xmrun was a major ugly hack. The new
+	system now ensures that the app is launched independantly of
+	the gRun process. None of that fire off a shell that GNOME
+	uses either.
+
+Added long switches
+	Added --help and --version to -h and -v for reasons of Unix
+	standards adherence.

@@ -1,0 +1,120 @@
+# Portugeuse language file for gRun
+# Copyright (C) 1999 Southern Gold Development
+# Frédéric L.W.Meunier <linux@urbi.com.br>, 1999.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: gRun 0.9.2\n"
+"POT-Creation-Date: 1999-02-06 15:28+0200\n"
+"PO-Revision-Date: 1999-02-06 13:58+0200\n"
+"Last-Translator: Frédéric L.W.Meunier <linux@urbi.com.br>\n"
+"Language-Team: Frédéric L.W.Meunier <linux@urbi.com.br>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=CHARSET\n"
+"Content-Transfer-Encoding: ENCODING\n"
+
+#: grun.c:838
+msgid "Choose Application"
+msgstr "Escolher um aplicativo"
+
+#: grun.c:912
+msgid ""
+"gRun launches applications under X\n"
+"\n"
+"Usage grun [options] [file options]\n"
+"\n"
+"   file options     Launch file directly, no dialog boxes\n"
+"   --persist        Dialog persistance\n"
+"   --preload file   Load file as default command\n"
+"   --notips         Disable tooltips\n"
+"   --version        Show version\n"
+"   --help           Show this guide \n"
+"\n"
+"Copyright Southern Gold Development 1998\n"
+msgstr ""
+"gRun executa aplicativos no X\n"
+"\n"
+"Uso grun [opções] [Parâmetros de arquivo]\n"
+"\n"
+"   Parâmetros de arquivo   Executa aplicativo diretamente, semjanela de "
+"diálogo\n"
+"   --persist               Diálogo persistente\n"
+"   --preload file          Carrega arquivo como sendo o comando default\n"
+"   --notips                Desabilita dicas\n"
+"   --version               Exibe a versão\n"
+"   --help                  Exibe esta mensagem \n"
+"\n"
+"Direitos autorais de Southern Gold Development 1998\n"
+
+#: grun.c:916
+#, c-format
+msgid ""
+"gRun version %s\n"
+"\n"
+"Copyright Southern Gold Development 1998\n"
+msgstr ""
+"gRun versão %s\n"
+"\n"
+"Direitos autorais de Southern Gold Development 1998\n"
+
+#: grun.c:968 grun.c:969
+#, c-format
+msgid "gRun %s"
+msgstr "gRun %s"
+
+#: grun.c:987
+msgid "Launch Application"
+msgstr "Executar um aplicativo"
+
+#: grun.c:1023
+msgid "OK"
+msgstr "OK"
+
+#: grun.c:1027
+msgid "Launch application"
+msgstr "Executar o aplicativo"
+
+#: grun.c:1027
+msgid "The OK button launches the application given in the entry box"
+msgstr "O botão OK executa o aplicativo determinado na janela de entrada"
+
+#: grun.c:1031
+msgid "Close"
+msgstr "Fechar"
+
+#: grun.c:1034
+msgid "Cancel"
+msgstr "Cancelar"
+
+#: grun.c:1041
+msgid "Close gRun"
+msgstr "Fechar gRun"
+
+#: grun.c:1041
+msgid "The Close button will close the persistant gRun window"
+msgstr "O botão Fechar fecha a janela persistente de gRun"
+
+#: grun.c:1044
+msgid "Cancel launch"
+msgstr "Cancelar a execução"
+
+#: grun.c:1044
+msgid "The Cancel button cancels the launch process and closes gRun"
+msgstr "O botão Cancelar cancela a execução do programa e fecha gRun"
+
+#: grun.c:1048
+msgid "Browse"
+msgstr "Navegar"
+
+#: grun.c:1052
+msgid "Browse for command"
+msgstr "Navegar à procura de um comando"
+
+#: grun.c:1052
+msgid ""
+"The Browse button opens a file selection box so the user can browse for the "
+"command to launch"
+msgstr ""
+"O botão Navegar abre uma caixa de diálogo para que o usuário possa achar um "
+"comando para executar"
