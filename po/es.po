@@ -2,17 +2,16 @@
 # Copyright (C) 1999 Southern Gold Development
 # Esteban Manchado <A2092@correo.dis.ulpgc.es>, 1999.
 #
-#, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: gRun 0.9.2\n"
 "POT-Creation-Date: 1999-02-06 15:28+0200\n"
-"PO-Revision-Date: 1999-02-06 13:54+0200\n"
+"PO-Revision-Date: 2007-09-21 19:51-0500\n"
 "Last-Translator: Esteban Manchado <A2092@correo.dis.ulpgc.es>\n"
 "Language-Team: Esteban Manchado <A2092@correo.dis.ulpgc.es>\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=CHARSET\n"
-"Content-Transfer-Encoding: ENCODING\n"
+"Content-Type: text/plain; charset=ISO-8859-1\n"
+"Content-Transfer-Encoding: 8bit\n"
 
 #: grun.c:838
 msgid "Choose Application"
