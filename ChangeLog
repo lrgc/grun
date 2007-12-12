@@ -1,3 +1,9 @@
+2007-12-11  gettextize  <bug-gnu-gettext@gnu.org>
+
+	* Makefile.am (ACLOCAL_AMFLAGS): New variable.
+	(EXTRA_DIST): Add config.rpath, m4/ChangeLog.
+	* configure.ac (AC_OUTPUT): Remove command that created po/Makefile.
+
 4 February 1999
 	- Released version 0.9.2
 
