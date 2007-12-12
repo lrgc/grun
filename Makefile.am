@@ -5,8 +5,9 @@ bin_PROGRAMS = grun
 grun_SOURCES = grun.c 
 man_MANS = grun.1x
 EXTRA_DIST = config.rpath m4/ChangeLog  Makefile.vc6 BUGS README INSTALL INSTALL.Win AUTHORS COPYING NEWS TODO LANGUAGES grun.1x grun2.xpm consfile gassoc messages.po
-AM_CFLAGS = -DLOCALEDIR=\""$(localedir)"\"
-LDADD = $(INTLLIBS)
+AM_CFLAGS = -DLOCALEDIR=\""$(localedir)"\"  $(GTK_CFLAGS)
+AM_LDFLAGS= -Wl,--as-needed -Wl,-z -Wl,defs
+grun_LDADD = $(INTLLIBS) $(GTK_LIBS)
 grundatadir = $(datadir)/grun
 grundata_DATA = gassoc consfile
 
