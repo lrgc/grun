@@ -2,7 +2,8 @@ dnl ---------------------------------------------------------------------------
 dnl Process this file with autoconf to produce a configure script.
 dnl $Id$
 dnl ---------------------------------------------------------------------------
-AC_INIT(grun.c)
+AC_INIT
+AC_CONFIG_SRCDIR([grun.c])
 GRUN_VERSION=0.9.2
 
 dnl ---------------------------------------------------------------------------
@@ -32,8 +33,7 @@ dnl   CFLAGS="-O2 -g"
 dnl fi
 
 AC_PROG_CC
-dnl AC_PROG_CXX
-dnl AC_PROG_RANLIB
+AC_GNU_SOURCE
 
 dnl ---------------------------------------------------------------------------
 dnl clean compiles
@@ -51,7 +51,7 @@ dnl ---------------------------------------------------------------------------
 dnl now some other stuff
 dnl AC_CANONICAL_HOST  ... needs config.guess
 dnl ---------------------------------------------------------------------------
-AM_CONFIG_HEADER(config.h)
+AC_CONFIG_HEADERS([config.h])
 AM_SANITY_CHECK
 
 dnl ---------------------------------------------------------------------------
@@ -63,11 +63,7 @@ AM_GNU_GETTEXT
 dnl ---------------------------------------------------------------------------
 dnl check for GTK
 dnl ---------------------------------------------------------------------------
-AM_PATH_GTK(1.0.1,
-            [LIBS="$LIBS $GTK_LIBS"
-            CFLAGS="$CFLAGS $GTK_CFLAGS"],
-            AC_MSG_ERROR(Cannot find GTK+: Is gtk-config in executable path?))
-
+AM_PATH_GTK_2_0(2.12.0)
 
 dnl ---------------------------------------------------------------------------
 dnl enable GUI/console type checking
@@ -77,7 +73,7 @@ AC_ARG_ENABLE(
 	testfile,
 	[  --enable-testfile       enable testfile code yes/no (default=no) ],
 	[if test $enableval = yes; then
-		AC_DEFINE(TESTFILE)
+		AC_DEFINE(TESTFILE, [], "Enable testfile code")
 		use_testfile=yes
 	fi]
 	)
@@ -90,7 +86,7 @@ AC_ARG_WITH(
 	fi]
 	)
 if test $use_testfile = yes; then
-	AC_DEFINE_UNQUOTED(XTERM, "$def_xterm")
+	AC_DEFINE_UNQUOTED(XTERM, "$def_xterm", "Default xterm binary")
 fi
 
 dnl ---------------------------------------------------------------------------
@@ -100,19 +96,9 @@ AC_ARG_ENABLE(
 	associations,
 	[  --enable-associations   enable associations code yes/no (default=no) ],
 	[if test $enableval = yes; then
-		AC_DEFINE(ASSOC)
+		AC_DEFINE(ASSOC, [], "Enable associations code")
 	fi]
 	)
-
-dnl ---------------------------------------------------------------------------
-dnl Pass default prefix into grun
-dnl ---------------------------------------------------------------------------
-
-if test x$prefix != xNONE; then
-	AC_DEFINE_UNQUOTED(PREFIX, "${prefix}")
-else
-	AC_DEFINE_UNQUOTED(PREFIX, "${ac_default_prefix}")
-fi
 
 dnl ---------------------------------------------------------------------------
 dnl checks for correctly defined types
@@ -127,5 +113,6 @@ AC_CHECK_HEADERS(string.h unistd.h)
 dnl ---------------------------------------------------------------------------
 dnl Makefiles to create:
 dnl ---------------------------------------------------------------------------
-AC_OUTPUT(Makefile intl/Makefile po/Makefile.in,
-          [sed -e "/POTFILES =/r po/POTFILES" po/Makefile.in > po/Makefile ])
+AC_CONFIG_FILES([Makefile intl/Makefile po/Makefile.in])
+AC_CONFIG_COMMANDS([default],[],[])
+AC_OUTPUT
