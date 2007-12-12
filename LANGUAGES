@@ -1,0 +1,22 @@
+Supported languages - English, Canadian French, German, Spanish, Brazilian Portugese
+
+Changed from my own version of i18n to using gettext to do it for me. I have ported
+the headers over to .po files for the languages I have. If you find that your
+language is missing, which probably will be the case for the first couple of releases
+as I only speak English, please write a .po file for it.
+
+To do this, copy the file messages.po to xx.po where xx is your 2 character country
+code. Then translate the msgid strings and place them in the msgstr strings. Look at
+one of the other .po files for more details.
+
+Please don't flame me if your language isn't present, I'm no polyglot and only
+speak English. And C.
+
+Thank you
+
+Bruce Smith <tangomanrulz@geocities.com>
+
+Keyserver for PGP Key:1DE2BBA9
+Key Server=http://www-swiss.ai.mit.edu/~bal/pks-commands.html
+Key Fingerprint = 0C 1C B6 D4 BC 0E D9 C0  4C 00 2B F9 54 0B 7E FB
+
