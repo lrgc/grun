@@ -2,38 +2,23 @@ dnl ---------------------------------------------------------------------------
 dnl Process this file with autoconf to produce a configure script.
 dnl $Id$
 dnl ---------------------------------------------------------------------------
-AC_INIT
+AC_INIT([Grun], [0.9.3])
 AC_CONFIG_SRCDIR([grun.c])
-GRUN_VERSION=0.9.2
+AM_CONFIG_HEADER([config.h])
 
-dnl ---------------------------------------------------------------------------
-dnl for automake:
-dnl ---------------------------------------------------------------------------
-AUTOMAKE_OPTIONS=no-dependencies
-VERSION=$GRUN_VERSION
-PACKAGE=grun
+AM_INIT_AUTOMAKE
+AM_MAINTAINER_MODE
 
-
-dnl ---------------------------------------------------------------------------
-dnl Initialize automake now
-dnl ---------------------------------------------------------------------------
-AM_INIT_AUTOMAKE($PACKAGE, $VERSION)
-AC_SUBST(GRUN_VERSION)
-AC_SUBST(VERSION)
-AC_SUBST(PACKAGE)
-
-dnl ---------------------------------------------------------------------------
-dnl checks for needed compilers
-dnl ---------------------------------------------------------------------------
-dnl CFLAGS=""
-dnl if test x${CFLAGS+set} = xset ; then
-dnl   :
-dnl else
-dnl   CFLAGS="-O2 -g"
-dnl fi
+AC_ISC_POSIX
+AC_USE_SYSTEM_EXTENSIONS
 
 AC_PROG_CC
-AC_GNU_SOURCE
+AM_PROG_CC_STDC
+AM_PROG_CC_C_O
+AC_HEADER_STDC
+AC_PROG_INSTALL
+AC_PROG_LN_S
+AC_PROG_MAKE_SET
 
 dnl ---------------------------------------------------------------------------
 dnl clean compiles
@@ -51,14 +36,6 @@ dnl ---------------------------------------------------------------------------
 dnl now some other stuff
 dnl AC_CANONICAL_HOST  ... needs config.guess
 dnl ---------------------------------------------------------------------------
-AC_CONFIG_HEADERS([config.h])
-AM_SANITY_CHECK
-
-dnl ---------------------------------------------------------------------------
-dnl Internationalization
-dnl ---------------------------------------------------------------------------
-ALL_LINGUAS="de es fr pt"
-AM_GNU_GETTEXT
 
 dnl ---------------------------------------------------------------------------
 dnl check for GTK
@@ -110,9 +87,12 @@ dnl checks for header files & functions
 dnl ---------------------------------------------------------------------------
 AC_CHECK_HEADERS(string.h unistd.h)
 
+AM_GNU_GETTEXT
+AM_GNU_GETTEXT_VERSION
+
 dnl ---------------------------------------------------------------------------
 dnl Makefiles to create:
 dnl ---------------------------------------------------------------------------
-AC_CONFIG_FILES([Makefile intl/Makefile po/Makefile.in])
+AC_CONFIG_FILES([Makefile po/Makefile.in intl/Makefile])
 AC_CONFIG_COMMANDS([default],[],[])
 AC_OUTPUT
