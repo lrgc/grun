@@ -9,10 +9,7 @@ completion from the history and from PATH, recognition of console mode
 applications and launching a terminal for them, file extension associations
 and a dual fork()/execvp() application launcher.
 
-gRun runs on both Unix platforms, tested with GTK 1.0.6, 1.1.2, 1.1.7 and
-1.1.9, and on Win32, using Tor Lillqvist's port of GTK. Operation under
-Win32 is slightly different than under Unix. Troy Engel is responsible for
-the port to Win32.
+gRun runs on Unix platforms, tested with GTK 2.12.
 
 The history mechanism is intelligent and only add commands that are new and
 which exist to the history. When gRun starts, the newest command in the
@@ -24,7 +21,7 @@ is added is selected.
 By using --preload, the user can specify the command in the entry box on startup.
 This can be used for a menu situation.
 
-If the Tab key, F2 under Win32, is pressed, gRun retrieves the PATH enviroment
+If the Tab key is pressed, gRun retrieves the PATH enviroment
 variable and searches the directories specified for a match. If one is found,
 the command is completed as for the autocomplete above.
 
@@ -53,7 +50,7 @@ please email me with the information.
 Internationalization is now carried out by using gettext and .po files. See LANGUAGES
 for more details.
 
-For full installation instructions, please read the files INSTALL and INSTALL.Win.
+For full installation instructions, please read the file INSTALL.
 
 Bruce Smith <tangomanrulz@geocities.com>
 http://www.geocities.com/ResearchTriangle/Facility/1468/sg/index.html
