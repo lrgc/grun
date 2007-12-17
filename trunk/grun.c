@@ -752,7 +752,7 @@ void browse(GtkWidget *widget, gpointer data) {
 	gtk_widget_show(rsp);
 }
 
-void main(int argc, char **argv) {
+int main(int argc, char **argv) {
 	GtkWidget *win, *btn, *lbl, *cmb, *fix;
 	GtkTooltips *tips;
 	int c, cnt, len, persist, tooltips;
@@ -926,4 +926,5 @@ void main(int argc, char **argv) {
 	g_free(mask);
 	gtk_widget_show(win);
 	gtk_main();
+	return 0;
 }
