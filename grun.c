@@ -1,6 +1,5 @@
 /* gRun - GTK application launcher dialog
  * Copyright (C) 1998 Southern Gold Development <tangomanrulz@geocities.com>
- * All Win32 code Copyright (C) 1998 Troy Engel <tengel@sonic.net> 
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,33 +22,22 @@
 #include <stdlib.h>
 #include <string.h>
 
-#ifdef WIN32
-#include <windows.h>
-#define PATH_CHAR	";"
-#define DIR_CHAR	"\\"
-#define DIR_INT	'\\'
-#define DOT_CHAR	"_"
-#define ARG_BASE	0
-#define VERSION 	"0.9.2"
-#define PREFIX	"C:\\WINDOWS"
-
-#else
 #include "config.h"
-#include <strings.h>
 #include <unistd.h>
 #include <dirent.h>
 #include "grun2.xpm"
+
 #if defined (HAVE_GETTEXT) || defined (HAVE_CATGETS)
 #include <libintl.h>
 #else
 #include "intl/libintl.h"
 #endif
+
 #define PATH_CHAR	":"
 #define DIR_CHAR	"/"
 #define DIR_INT 	'/'
 #define DOT_CHAR	"."
 #define ARG_BASE	1
-#endif
 
 #include <sys/stat.h>
 
@@ -65,14 +53,6 @@ struct grun {
 	guint cmdLen;
 	guchar status;
 };
-
-#ifdef WIN32
-# define gettext(Msgid) (Msgid)
-# define dgettext(Domainname, Msgid) (Msgid)
-# define dcgettext(Domainname, Msgid, Category) (Msgid)
-# define textdomain(Domainname) ((char *) Domainname)
-# define bindtextdomain(Domainname, Dirname) ((char *) Dirname)
-#endif /* WIN32 */
 
 /* Function prototypes */
 
@@ -188,7 +168,6 @@ int isFileX(const gchar *file) {
 
 #ifdef ASSOC
 gchar *getAssoc(const gchar *ext) {
-#ifndef WIN32
 	FILE *fHnd;
 	gchar *line, *split, *fname, *rsp, *home_env;
 	struct stat buff;
@@ -225,9 +204,6 @@ gchar *getAssoc(const gchar *ext) {
 	}
 	fclose(fHnd);
 	return NULL;
-#else
-/* Win lookup code goes here. Possibly HKey lookup? */
-#endif
 }
 #endif
 
@@ -238,22 +214,14 @@ int isFileExec(const gchar *file) {
 
 	inc = g_strdup(file);
 	hold = inc;
-#ifndef WIN32
 	split = strsep(&inc, " ");
-#else
-	split = strtok(inc, " ");
-#endif
 
 	err = stat(split, &buff);
 	if (err == -1) {
 		twrk = getenv("PATH");
 		path = g_strdup(twrk);
 		inc = path;
-#ifndef WIN32
 		twrk = strsep(&path, PATH_CHAR);
-#else
-		twrk = strtok(path, PATH_CHAR);
-#endif
 		while (twrk) {
 			awrk = g_strconcat(twrk, DIR_CHAR, split, NULL);
 			err = stat(awrk, &buff);
@@ -269,11 +237,7 @@ int isFileExec(const gchar *file) {
 				}
 			}
 			else {
-#ifndef WIN32
 				twrk = strsep(&path, PATH_CHAR);
-#else
-				twrk = strtok(NULL, PATH_CHAR);
-#endif
 			}
 		}
 	}
@@ -358,7 +322,6 @@ void gquit() {
 }
 
 void startApp(const gchar *cmd, sgrun *gdat) {
-#ifndef WIN32
 	char **args, *work, *twrk, *assoc, *hold, *split;
 	int cnt, len, scnt, pid, res;
 
@@ -497,59 +460,6 @@ void startApp(const gchar *cmd, sgrun *gdat) {
 			_exit(0);
 		}
 	}
-#else /* Win32 */
-	STARTUPINFO startupinfo;
-	PROCESS_INFORMATION processinfo;
-	int cnt;
-
-	startupinfo.cb = sizeof (STARTUPINFO);
-	startupinfo.lpReserved = NULL;
-	startupinfo.lpDesktop = NULL;
-	startupinfo.lpTitle = NULL;
-	startupinfo.dwFlags = STARTF_USESHOWWINDOW;
-	startupinfo.wShowWindow = SW_SHOWDEFAULT;
-	startupinfo.cbReserved2 = 0;
-	startupinfo.lpReserved2 = NULL;
-
-	/* this is implemented using NULL for the app name
-	   and the entire cmdline in the lpCmdLine param on
-	   purpose. WinNT firing off 16bit apps requires
-	   CreateProcess to be called this way. TODO: parse
-	   the cmdline and figure out if it's a 16bit app
-	   on our own, then adjust everything.
-	*/
-	/* TODO: doesn't handle files, folders and .lnk like
-	   shellexecute does. fix it. */
-	if (!CreateProcess (NULL, (gchar *)cmd, NULL, NULL,
-			TRUE, NORMAL_PRIORITY_CLASS, NULL,
-			NULL, &startupinfo, &processinfo)) {
-		g_message ("CreateProcess failed\n");
-		_exit(0);
-	}
-	CloseHandle (processinfo.hThread);
-	if (gdat) { /* gdat = NULL if cmdline launched */
-		cnt = saveHistory(cmd, gdat);
-		if (gdat) {
-			if (gdat->status & 0x80) {
-				if (cnt) {
-					gdat->history = g_list_prepend(gdat->history, (gpointer) cmd);
-					gtk_combo_set_popdown_strings(GTK_COMBO (gdat->cmb), gdat->history);
-				}
-				gtk_entry_select_region(GTK_ENTRY (GTK_COMBO (gdat->cmb)->entry), 0, -1);
-				gtk_entry_set_position(GTK_ENTRY (GTK_COMBO (gdat->cmb)->entry), 0);
-				gdat->cmdLen = 0;
-				gtk_signal_emit_stop_by_name(GTK_OBJECT ((GTK_COMBO (gdat->cmb))->entry), "key_press_event");
-			}
-			else {
-				g_list_free(gdat->history);
-				gtk_widget_destroy(gdat->win);
-			}
-		}
-		else {
-			exit(0);
-		}
-	}
-#endif /* WIN32 */
 }
 
 /* This function takes a command fragment and searches through
@@ -563,11 +473,7 @@ gint gcomplete(sgrun *gdat, const gchar *twrk) {
 		pos = strlen(twrk);
 		work = gdat->history;
 		while (work) {
-#ifdef WIN32 /* we're a case-insensative platform [sigh] */
-			if (strnicmp(twrk, (gchar *) work->data, pos) == 0) {
-#else
 			if (strncmp(twrk, (gchar *) work->data, pos) == 0) {
-#endif
 				gdat->cmdLen = pos;
 				gtk_entry_set_text(GTK_ENTRY ((GTK_COMBO (gdat->cmb))->entry), (gchar *) work->data);
 				len = strlen(work->data);
@@ -600,21 +506,13 @@ gint gdircomplete(sgrun *gdat, const gchar *twrk) {
 	if (strlen(path) < 1) {
 		return FALSE;
 	}
-#ifdef WIN32
-	wdir = strtok(path, PATH_CHAR);
-#else
 	wdir = strsep(&path, PATH_CHAR);
-#endif
 	while (wdir) {
 		dir = opendir(wdir);
 		if (dir) {
 			file = readdir(dir);
 			while (file) {
-#ifdef WIN32 /* case insensative again */
-				if (strnicmp(twrk, file->d_name, pos) == 0) {
-#else
 				if (strncmp(twrk, file->d_name, pos) == 0) {
-#endif
 					inc = g_strconcat(wdir, DIR_CHAR, file->d_name, NULL);
 					err = stat(inc, &buf);
 					g_free(inc);
@@ -633,11 +531,7 @@ gint gdircomplete(sgrun *gdat, const gchar *twrk) {
 			}
 			closedir(dir);
 		}
-#ifdef WIN32
-		wdir = strtok(NULL, PATH_CHAR);
-#else
 		wdir = strsep(&path, PATH_CHAR);
-#endif
 	}
 	g_free(hold);
 	return FALSE;
@@ -669,11 +563,7 @@ gint gdirmapcomplete(sgrun *gdat, const gchar *twrk) {
 	if (dir) {
 		file = readdir(dir);
 		while (file) {
-#ifdef WIN32 /* case insensative again */
-			if (strnicmp(frag, file->d_name, lenf) == 0) {
-#else
 			if (strncmp(frag, file->d_name, lenf) == 0) {
-#endif
 				inc = g_strconcat(wdir, file->d_name, NULL);
 				err = stat(inc, &buf);
 				if (buf.st_mode & S_IFDIR) {
@@ -723,7 +613,6 @@ gint gclick(GtkWidget *widget, GdkEventKey *event, gpointer data) {
 			return FALSE;
 			break;
 /* Handle backspace with autocomplete */
-#ifndef WIN32 /* this is a WinUI handled issue for us */
 		case GDK_BackSpace:
 			cmd = gtk_entry_get_text(GTK_ENTRY ((GTK_COMBO (gdat->cmb))->entry));
 			if ((strlen(cmd) > 0) && (gdat->cmdLen > 0)) {
@@ -745,14 +634,9 @@ gint gclick(GtkWidget *widget, GdkEventKey *event, gpointer data) {
 				return FALSE;
 			}
 			break;
-#endif
 /* Autocomplete from PATH if Tab */
-#ifndef WIN32 /* Win UI: TAB=next control, ESC quits */
 		case GDK_Tab:
 		case GDK_Escape:
-#else
-		case GDK_F2: /* arbitrary, F1 == Help in WinUI */
-#endif
 			cmd = gtk_entry_get_text(GTK_ENTRY ((GTK_COMBO (gdat->cmb))->entry));
 			if ((strlen(cmd) == 0) || (gdat->cmdLen == 0)) {
 				return FALSE;
@@ -762,11 +646,7 @@ gint gclick(GtkWidget *widget, GdkEventKey *event, gpointer data) {
 			if ((gint)strlen(cmd) != gdat->cmdLen) {
 				twrk[gdat->cmdLen] = '\0';
 			}
-#ifdef WIN32
-			if ((twrk[0] == DIR_INT) || (twrk[1] == ':')) {
-#else
 			if (twrk[0] == DIR_INT) {
-#endif
 				res = gdirmapcomplete(gdat, twrk);
 			}
 			else {
@@ -872,66 +752,22 @@ void browse(GtkWidget *widget, gpointer data) {
 	gtk_widget_show(rsp);
 }
 
-#ifndef WIN32
 void main(int argc, char **argv) {
-#else
-int PASCAL WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, int nShowCmd) {
-#endif
 	GtkWidget *win, *btn, *lbl, *cmb, *fix;
 	GtkTooltips *tips;
 	int c, cnt, len, persist, tooltips;
 	char *home_env, *fname, *cmd, *icmd;
 	GList *list;
 	sgrun *gdat;
-#ifndef WIN32
 	GdkPixmap *pix;
 	GdkBitmap *mask;
 	GtkStyle *style;
-#endif
-
-#ifdef WIN32
-	/* parse into a command line ala argv, argc */
-	char **argv, *work, *twrk;
-	int argc;
-
-	len = strlen(lpCmdLine);
-	argc = 0;
-	for (cnt = 0; cnt < len; cnt++) {
-		if (lpCmdLine[cnt] == ' ') {
-			argc++;
-		}
-	}
-	argv = g_malloc(sizeof(char *) * (argc + 1));
-	argv[argc] = NULL;
-	if (argc == 1) {
-			argv[0] = g_malloc(sizeof(char) * (len + 1));
-			strcpy(argv[0], lpCmdLine);
-	}
-	else {
-		work = g_malloc(sizeof(char) * (len + 1));
-		strcpy(work, lpCmdLine);
-		twrk = (char *) strtok(work, " ");
-		argv[0] = twrk;
-		cnt = 1;
-		while (twrk) {
-			twrk = (char *) strtok(NULL, " ");
-			argv[cnt] = twrk;
-			cnt++;
-		}
-		argv[cnt] = work;
-	}
-#endif /* WIN32 */
 
 	gtk_init(&argc, &argv);
-#ifndef WIN32
 	setlocale (LC_ALL, "");
 	bindtextdomain (PACKAGE, LOCALEDIR);
 	textdomain (PACKAGE);
-#endif /* WIN32 */
  
-/* TODO: these don't do anything under Win32
-   because we've made it a non-console app.
-   Maybe use some sort of dialogbox. */
 /* New parameter scan routine, checks all parameters */
 	persist = FALSE;
 	tooltips = TRUE;
@@ -968,7 +804,6 @@ int PASCAL WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, int nS
 		}
 			
 		if (argv[1][0] != '-') {
-#ifndef WIN32
 			len = 0;
 			for (c = 1; c < argc; c++) {
 				len += strlen(argv[c]) + 1;
@@ -980,9 +815,6 @@ int PASCAL WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, int nS
 			}
 			cmd[len - 1] = '\0';
 			startApp(cmd, NULL);
-#else /* WIN32 */
-			startApp(lpCmdLine, NULL);
-#endif
 		}
 	}
 
@@ -1085,14 +917,13 @@ int PASCAL WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, int nS
 	gtk_widget_show(fix);
 	gtk_window_set_policy(GTK_WINDOW (win), FALSE, FALSE, FALSE);
 	gtk_widget_realize(win);
-/* Icon, can this work for Win? */
-#ifndef WIN32
+	
+	/* Icon */
 	style = gtk_widget_get_style(win);
 	pix = gdk_pixmap_create_from_xpm_d(win->window, &mask, &style->bg[GTK_STATE_NORMAL], grun2);
 	gdk_window_set_icon(win->window, NULL, pix, mask);
 	g_free(pix);
 	g_free(mask);
-#endif
 	gtk_widget_show(win);
 	gtk_main();
 }
