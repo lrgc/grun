@@ -74,6 +74,35 @@ struct grun {
 # define bindtextdomain(Domainname, Dirname) ((char *) Dirname)
 #endif /* WIN32 */
 
+/* Function prototypes */
+
+#ifdef TESTFILE
+int isFileX(const gchar *file);
+#endif /* TESTFILE */
+
+#ifdef ASSOC
+gchar *getAssoc(const gchar *ext);
+#endif /* ASSOC */
+
+char *getLine(FILE *file);
+int isFileExec(const gchar *file);
+GList *loadHistory();
+int saveHistory(const char *cmd, sgrun *gdat);
+void gquit();
+void startApp(const gchar *cmd, sgrun *gdat);
+gint gcomplete(sgrun *gdat, const gchar *twrk);
+gint gdircomplete(sgrun *gdat, const gchar *twrk);
+gint gdirmapcomplete(sgrun *gdat, const gchar *twrk);
+gint gclick(GtkWidget *widget, GdkEventKey *event, gpointer data);
+gint gexit(GtkWidget *widget, GdkEvent *event, gpointer data);
+void launch(GtkWidget *widget, gpointer data);
+void cancel(GtkWidget *widget, gpointer data);
+void bclose(GtkWidget *widget, gpointer data);
+void bcancel(GtkWidget *widget, gpointer data);
+void browse(GtkWidget *widget, gpointer data);
+
+/* End prototypes */
+
 char *getLine(FILE *file) {
 	char *tmp, in;
 	int cnt = 0, retIn;
