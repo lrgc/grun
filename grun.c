@@ -443,8 +443,11 @@ void startApp(const gchar *cmd, sgrun *gdat) {
 					gdat->history = g_list_prepend(gdat->history, (gpointer) cmd);
 					gtk_combo_set_popdown_strings(GTK_COMBO (gdat->cmb), gdat->history);
 				}
-				gtk_entry_select_region(GTK_ENTRY (GTK_COMBO (gdat->cmb)->entry), 0, -1);
+                                /* the order does matter here;
+                                   move the cursor first,
+                                   then select the region */
 				gtk_entry_set_position(GTK_ENTRY (GTK_COMBO (gdat->cmb)->entry), 0);
+				gtk_entry_select_region(GTK_ENTRY (GTK_COMBO (gdat->cmb)->entry), 0, -1);
 				gdat->cmdLen = 0;
 				gtk_signal_emit_stop_by_name(GTK_OBJECT ((GTK_COMBO (gdat->cmb))->entry), "key_press_event");
 			}
