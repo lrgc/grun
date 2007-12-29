@@ -57,9 +57,7 @@ struct grun {
 
 /* Function prototypes */
 
-#ifdef TESTFILE
 int isFileX(const gchar *file);
-#endif /* TESTFILE */
 
 #ifdef ASSOC
 gchar *getAssoc(const gchar *ext);
@@ -116,8 +114,10 @@ char *getLine(FILE *file) {
 	}	
 }
 
-#ifdef TESTFILE
 int isFileX(const gchar *file) {
+#ifndef TESTFILE
+        return TRUE; // Ie, we'll consider everything an executable.
+#else
 	FILE *fHnd;
 	gchar *fname, *home_env, *line, *twrk, *hold, *split, *rdx;
 	struct stat buff;
@@ -164,8 +164,8 @@ int isFileX(const gchar *file) {
 	g_free(hold);
 	fclose(fHnd);
 	return TRUE;
+#endif /* TESTFILE */
 }
-#endif
 
 #ifdef ASSOC
 gchar *getAssoc(const gchar *ext) {
@@ -340,7 +340,6 @@ void startApp(const gchar *cmd, sgrun *gdat) {
 	}
 	else {
 		if (res) {
-#ifdef TESTFILE
 			res = isFileX(cmd);
 			if (res) {
 				work = g_strdup(cmd);
@@ -348,9 +347,6 @@ void startApp(const gchar *cmd, sgrun *gdat) {
 			else {
 				work = g_strconcat(XTERM, " -e ", cmd, NULL);
 			}
-#else
-			work = g_strdup(cmd);
-#endif
 		}
 		else {
 #ifdef ASSOC
