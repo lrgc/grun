@@ -69,9 +69,9 @@ GList *loadHistory();
 int saveHistory(const char *cmd, sgrun *gdat);
 void gquit();
 void startApp(const gchar *cmd, sgrun *gdat);
-gint gcomplete(sgrun *gdat, const gchar *twrk);
-gint gdircomplete(sgrun *gdat, const gchar *twrk);
-gint gdirmapcomplete(sgrun *gdat, const gchar *twrk);
+gint gcomplete(sgrun *gdat, const gchar *twrk, gint oldpos);
+gint gdircomplete(sgrun *gdat, const gchar *twrk, gint oldpos);
+gint gdirmapcomplete(sgrun *gdat, const gchar *twrk, gint oldpos);
 gint gclick(GtkWidget *widget, GdkEventKey *event, gpointer data);
 gint gexit(GtkWidget *widget, GdkEvent *event, gpointer data);
 void launch(GtkWidget *widget, gpointer data);
@@ -466,25 +466,29 @@ void startApp(const gchar *cmd, sgrun *gdat) {
    the history for the first match it finds. This is loaded into
    the entry box */
 
-gint gcomplete(sgrun *gdat, const gchar *twrk) {
+gint gcomplete(sgrun *gdat, const gchar *twrk, gint oldpos) {      
 		GList *work;
 		gint pos, len;
 
 		pos = strlen(twrk);
 		work = gdat->history;
+
 		while (work) {
 			if (strncmp(twrk, (gchar *) work->data, pos) == 0) {
 				gdat->cmdLen = pos;
 				gtk_entry_set_text(GTK_ENTRY ((GTK_COMBO (gdat->cmb))->entry), (gchar *) work->data);
 				len = strlen(work->data);
-				gtk_entry_select_region(GTK_ENTRY ((GTK_COMBO (gdat->cmb))->entry), pos, len);
 				gtk_entry_set_position(GTK_ENTRY ((GTK_COMBO (gdat->cmb))->entry), pos);
 				gtk_signal_emit_stop_by_name(GTK_OBJECT ((GTK_COMBO (gdat->cmb))->entry), "key_press_event");
 				return TRUE;
 			}
 			work = work->next;
 		}
-		return FALSE;
+
+                        /* if searching the history fails,
+                           then search the PATH
+                        */
+                        return gdircomplete(gdat, twrk, oldpos);
 }
 
 /* This function takes a command fragment and searches through
@@ -492,7 +496,7 @@ gint gcomplete(sgrun *gdat, const gchar *twrk) {
    that it finds. This is loaded into the entry box. This is bound
 	to Tab/Esc/F2 if the first character is not / */
 
-gint gdircomplete(sgrun *gdat, const gchar *twrk) {
+gint gdircomplete(sgrun *gdat, const gchar *twrk, gint oldpos) {
 	DIR *dir;
 	gchar *path, *inc, *wdir, *hold;
 	struct dirent *file;
@@ -504,6 +508,7 @@ gint gdircomplete(sgrun *gdat, const gchar *twrk) {
 	path = g_strdup(inc);
 	hold = path;
 	if (strlen(path) < 1) {
+          g_free(hold);
 		return FALSE;
 	}
 	wdir = strsep(&path, PATH_CHAR);
@@ -516,12 +521,54 @@ gint gdircomplete(sgrun *gdat, const gchar *twrk) {
 					inc = g_strconcat(wdir, DIR_CHAR, file->d_name, NULL);
 					err = stat(inc, &buf);
 					g_free(inc);
-					if (buf.st_mode & S_IEXEC) {
+					if ((err == 0) && (buf.st_mode & S_IEXEC)) {
 						gdat->cmdLen = pos;
 						gtk_entry_set_text(GTK_ENTRY ((GTK_COMBO (gdat->cmb))->entry), (gchar *) file->d_name);
 						len = strlen(file->d_name);
-						gtk_entry_select_region(GTK_ENTRY ((GTK_COMBO (gdat->cmb))->entry), pos, len);
 						gtk_entry_set_position(GTK_ENTRY ((GTK_COMBO (gdat->cmb))->entry), pos);
+                                                gtk_signal_emit_stop_by_name(GTK_OBJECT ((GTK_COMBO (gdat->cmb))->entry), "key_press_event");
+						closedir(dir);
+						g_free(hold);
+						return TRUE;
+					}
+				}
+				file = readdir(dir);
+			}
+			closedir(dir);
+		}
+		wdir = strsep(&path, PATH_CHAR);
+	}
+
+                g_free(hold);
+
+                /*
+                  discard the result of previous auto-completion
+                  if the user added a new character
+                */
+                if (pos <= oldpos)
+                  return FALSE;
+
+	inc = getenv("PATH");
+	path = g_strdup(inc);
+	hold = path;
+	if (strlen(path) < 1) {
+		return FALSE;
+	}
+	wdir = strsep(&path, PATH_CHAR);
+	while (wdir) {
+		dir = opendir(wdir);
+		if (dir) {
+			file = readdir(dir);
+			while (file) {
+				if (strncmp(twrk, file->d_name, oldpos) == 0) {
+					inc = g_strconcat(wdir, DIR_CHAR, file->d_name, NULL);
+					err = stat(inc, &buf);
+					g_free(inc);
+					if ((err == 0) && (buf.st_mode & S_IEXEC)) {
+                                          gdat->cmdLen = pos;
+                                          gtk_entry_set_text(GTK_ENTRY ((GTK_COMBO (gdat->cmb))->entry), twrk);
+                                          gtk_editable_set_position(GTK_EDITABLE ((GTK_COMBO (gdat->cmb))->entry), -1);
+                                          gtk_signal_emit_stop_by_name(GTK_OBJECT ((GTK_COMBO (gdat->cmb))->entry), "key_press_event");
 						closedir(dir);
 						g_free(hold);
 						return TRUE;
@@ -543,7 +590,7 @@ gint gdircomplete(sgrun *gdat, const gchar *twrk) {
 	the match is a directory, a / is appended. This is bound
 	to Tab/Esc/F2 if the first character is a / */
 
-gint gdirmapcomplete(sgrun *gdat, const gchar *twrk) {
+gint gdirmapcomplete(sgrun *gdat, const gchar *twrk, gint oldpos) {
 	DIR *dir;
 	gchar *path, *frag, *wdir, *hold, *inc, *whold;
 	struct dirent *file;
@@ -563,6 +610,12 @@ gint gdirmapcomplete(sgrun *gdat, const gchar *twrk) {
 	if (dir) {
 		file = readdir(dir);
 		while (file) {
+                  /* ignore the directory "." and ".." */
+                  if ((strcmp(file->d_name, ".") == 0)
+                      || (strcmp(file->d_name, "..") == 0)) {
+                    file = readdir(dir);
+                    continue;
+                  }
 			if (strncmp(frag, file->d_name, lenf) == 0) {
 				inc = g_strconcat(wdir, file->d_name, NULL);
 				err = stat(inc, &buf);
@@ -573,12 +626,14 @@ gint gdirmapcomplete(sgrun *gdat, const gchar *twrk) {
 					whold = g_strdup(inc);
 				}
 				g_free(inc);
-				if (err != -1) {
+                                if ((err == 0)
+                                    && ((buf.st_mode & S_IFDIR)
+                                        ||(buf.st_mode & S_IEXEC))) {
 					gdat->cmdLen = pos;
 					gtk_entry_set_text(GTK_ENTRY ((GTK_COMBO (gdat->cmb))->entry), (gchar *) whold);
 					len = strlen(whold);
-					gtk_entry_select_region(GTK_ENTRY ((GTK_COMBO (gdat->cmb))->entry), pos, len);
 					gtk_entry_set_position(GTK_ENTRY ((GTK_COMBO (gdat->cmb))->entry), pos);
+					gtk_signal_emit_stop_by_name(GTK_OBJECT ((GTK_COMBO (gdat->cmb))->entry), "key_press_event");
 					closedir(dir);
 					g_free(whold);
 					g_free(hold);
@@ -593,6 +648,53 @@ gint gdirmapcomplete(sgrun *gdat, const gchar *twrk) {
 		closedir(dir);
 	}	
 	g_free(hold);
+
+        /*
+          discard the result of previous auto-completion
+          if the user added a new character
+        */
+        if (pos <= oldpos)
+          return FALSE;
+
+	path = g_strdup(twrk);
+	hold = path;
+        path[oldpos] = '\0';
+	frag = rindex(path, DIR_INT);
+	frag[0] = '\0';
+	frag++;
+	lenf = strlen(frag);
+        if (lenf < 1) {
+          g_free(hold);
+          return FALSE;
+        }
+	wdir = g_strconcat(path, "/", NULL);
+	
+	dir = opendir(wdir);
+	if (dir) {
+		file = readdir(dir);
+		while (file) {
+			if (strncmp(frag, file->d_name, lenf) == 0) {
+				inc = g_strconcat(wdir, file->d_name, NULL);
+				err = stat(inc, &buf);
+				g_free(inc);
+                                if ((err == 0)
+                                    && ((buf.st_mode & S_IFDIR)
+                                        ||(buf.st_mode & S_IEXEC))) {
+                                          gdat->cmdLen = pos;
+                                          gtk_entry_set_text(GTK_ENTRY ((GTK_COMBO (gdat->cmb))->entry), twrk);
+                                          gtk_editable_set_position(GTK_EDITABLE ((GTK_COMBO (gdat->cmb))->entry), -1);
+                                          gtk_signal_emit_stop_by_name(GTK_OBJECT ((GTK_COMBO (gdat->cmb))->entry), "key_press_event");
+					closedir(dir);
+					g_free(hold);
+					return TRUE;
+				}
+			}
+			file = readdir(dir);
+		}
+		closedir(dir);
+	}	
+
+	g_free(hold);
 	return FALSE;		
 }
 	
@@ -600,6 +702,10 @@ gint gclick(GtkWidget *widget, GdkEventKey *event, gpointer data) {
 	gchar *cmd, *twrk, *tmp;
 	gint res;
 	sgrun *gdat;
+        gint selection_start;
+        gint selection_end;
+        gchar *selected_cmd;
+        gchar *entire_cmd;
 
 	gdat = (sgrun *) data;
 /* Fire off executable in command box */
@@ -614,13 +720,36 @@ gint gclick(GtkWidget *widget, GdkEventKey *event, gpointer data) {
 			break;
 /* Handle backspace with autocomplete */
 		case GDK_BackSpace:
-			cmd = gtk_entry_get_text(GTK_ENTRY ((GTK_COMBO (gdat->cmb))->entry));
-			if ((strlen(cmd) > 0) && (gdat->cmdLen > 0)) {
-				twrk = g_strdup(cmd);
-				gdat->cmdLen--;
-				twrk[gdat->cmdLen] = '\0';
+                  /* delete everything if the entire command is selected and
+                     if the cursor is at the last of the command
+                  */
+                  if (gtk_editable_get_selection_bounds(GTK_EDITABLE ((GTK_COMBO (gdat->cmb))->entry), &selection_start, &selection_end))
+                  {
+                    selected_cmd = gtk_editable_get_chars(GTK_EDITABLE ((GTK_COMBO (gdat->cmb))->entry), selection_start, selection_end);
+                    entire_cmd = gtk_editable_get_chars(GTK_EDITABLE ((GTK_COMBO (gdat->cmb))->entry), 0, -1);
+                    if ((strcmp(selected_cmd, entire_cmd) == 0)
+                        && (gtk_editable_get_position(GTK_EDITABLE ((GTK_COMBO (gdat->cmb))->entry)) == selection_end))
+                    {
+                      gtk_entry_set_text(GTK_ENTRY ((GTK_COMBO (gdat->cmb))->entry), "");
+                      gtk_signal_emit_stop_by_name(GTK_OBJECT ((GTK_COMBO (gdat->cmb))->entry), "key_press_event");
+                      g_free(selected_cmd);
+                      g_free(entire_cmd);
+                      return TRUE;
+                    }
+                    g_free(selected_cmd);
+                    g_free(entire_cmd);
+                  }
+
+                  cmd = gtk_editable_get_chars(GTK_EDITABLE ((GTK_COMBO (gdat->cmb))->entry), 0, gtk_editable_get_position(GTK_EDITABLE ((GTK_COMBO (gdat->cmb))->entry)));
+                  if ((strlen(cmd) > 0) && (gtk_editable_get_position(GTK_EDITABLE ((GTK_COMBO (gdat->cmb))->entry)) > 0)) {
+                    twrk = gtk_editable_get_chars(GTK_EDITABLE ((GTK_COMBO (gdat->cmb))->entry), 0, gtk_editable_get_position(GTK_EDITABLE ((GTK_COMBO (gdat->cmb))->entry)) - 1);
 				if (strlen(twrk) > 0) {
-					res = gcomplete(gdat, twrk);
+			if (twrk[0] == DIR_INT) {
+                                    res = gdirmapcomplete(gdat, twrk, strlen(cmd));
+                                  }
+                                  else {
+					res = gcomplete(gdat, twrk, strlen(cmd));
+                                        }
 				}
 				else {
 					res = TRUE;
@@ -628,49 +757,73 @@ gint gclick(GtkWidget *widget, GdkEventKey *event, gpointer data) {
 					gtk_signal_emit_stop_by_name(GTK_OBJECT ((GTK_COMBO (gdat->cmb))->entry), "key_press_event");
 				}
 				g_free(twrk);
+                                g_free(cmd);
 				return res;
 			}
 			else {
+                          g_free(cmd);
 				return FALSE;
 			}
 			break;
 /* Autocomplete from PATH if Tab */
-		case GDK_Tab:
 		case GDK_Escape:
-			cmd = gtk_entry_get_text(GTK_ENTRY ((GTK_COMBO (gdat->cmb))->entry));
-			if ((strlen(cmd) == 0) || (gdat->cmdLen == 0)) {
+          cancel(widget,data);
+          return FALSE;
+          break;
+		case GDK_Tab:
+                  cmd = gtk_editable_get_chars(GTK_EDITABLE ((GTK_COMBO (gdat->cmb))->entry), 0, gtk_editable_get_position(GTK_EDITABLE ((GTK_COMBO (gdat->cmb))->entry)));
+			if (strlen(cmd) == 0) {
 				return FALSE;
 			}
 			tmp = g_strdup(cmd);
 			twrk = g_strdup(cmd);
-			if ((gint)strlen(cmd) != gdat->cmdLen) {
-				twrk[gdat->cmdLen] = '\0';
-			}
 			if (twrk[0] == DIR_INT) {
-				res = gdirmapcomplete(gdat, twrk);
+				res = gdirmapcomplete(gdat, twrk, strlen(cmd));
 			}
 			else {
-				res = gdircomplete(gdat, twrk);
-			}
-			cmd = gtk_entry_get_text(GTK_ENTRY ((GTK_COMBO (gdat->cmb))->entry));
-			if (strcmp(cmd, tmp) != 0) {
-					gtk_signal_emit_stop_by_name(GTK_OBJECT ((GTK_COMBO (gdat->cmb))->entry), "key_press_event");
+				res = gdircomplete(gdat, twrk, strlen(cmd));
 			}
 			g_free(twrk);
 			g_free(tmp);
+                        g_free(cmd);
 			return res;
 			break;
 /* Autocomplete from history */
 		default:
 			/* make sure it's a non-command key */
-			cmd = gtk_entry_get_text(GTK_ENTRY ((GTK_COMBO (gdat->cmb))->entry));
+                  cmd = gtk_editable_get_chars(GTK_EDITABLE ((GTK_COMBO (gdat->cmb))->entry), 0, gtk_editable_get_position(GTK_EDITABLE ((GTK_COMBO (gdat->cmb))->entry)));
 			if (event->length > 0) {
+                  /* replace everything if the entire command is selected and
+                     if the cursor is at the last of the command
+                  */
+                  if (gtk_editable_get_selection_bounds(GTK_EDITABLE ((GTK_COMBO (gdat->cmb))->entry), &selection_start, &selection_end))
+                  {
+                    selected_cmd = gtk_editable_get_chars(GTK_EDITABLE ((GTK_COMBO (gdat->cmb))->entry), selection_start, selection_end);
+                    entire_cmd = gtk_editable_get_chars(GTK_EDITABLE ((GTK_COMBO (gdat->cmb))->entry), 0, -1);
+                    if ((strcmp(selected_cmd, entire_cmd) == 0)
+                        && (gtk_editable_get_position(GTK_EDITABLE ((GTK_COMBO (gdat->cmb))->entry)) == selection_end))
+                    {
+                      gtk_entry_set_text(GTK_ENTRY ((GTK_COMBO (gdat->cmb))->entry), event->string);
+                      gtk_editable_set_position(GTK_EDITABLE ((GTK_COMBO (gdat->cmb))->entry), -1);
+                      gtk_signal_emit_stop_by_name(GTK_OBJECT ((GTK_COMBO (gdat->cmb))->entry), "key_press_event");
+                      g_free(cmd);
+                      /* the input is appended to twrk below */
+                      cmd = g_strdup("");
+                      /* no return here; we need auto-completion */
+                    }
+                    g_free(selected_cmd);
+                    g_free(entire_cmd);
+                  }
 				twrk = g_strdup(cmd);
 				twrk = g_realloc(twrk, (strlen(twrk) + event->length + 1));
-				twrk[gdat->cmdLen] = '\0';
 				strncat(twrk, event->string, event->length);
 				if (strlen (twrk) > 0) {
-					res = gcomplete(gdat, twrk);
+			if (twrk[0] == DIR_INT) {
+                                    res = gdirmapcomplete(gdat, twrk, strlen(cmd));
+                                  }
+                                  else {
+					res = gcomplete(gdat, twrk, strlen(cmd));
+                                        }
 				}
 				else {
 					res = TRUE;
@@ -683,6 +836,7 @@ gint gclick(GtkWidget *widget, GdkEventKey *event, gpointer data) {
 					}
 				}
 				g_free(twrk);
+                                g_free(cmd);
 				return res;
 			}
 			else {
@@ -690,6 +844,7 @@ gint gclick(GtkWidget *widget, GdkEventKey *event, gpointer data) {
 				if ((event->keyval == GDK_End) && (strlen(cmd) != gdat->cmdLen)) {
 					gdat->cmdLen = strlen(cmd);
 				}
+                                g_free(cmd);
 				return FALSE;
 			}
 			break;
