@@ -137,7 +137,7 @@ int isFileX(const gchar *file) {
 	err = stat(fname, &buff);
 	if (err == -1) {
 			g_free(fname);
-			fname = g_strconcat("DATADIR", "/grun/consfile", NULL);
+			fname = g_strconcat(DATADIR, "/grun/consfile", NULL);
 	}
 
 	fHnd = fopen(fname, "rb");
@@ -180,7 +180,7 @@ gchar *getAssoc(const gchar *ext) {
 	err = stat(fname, &buff);
 	if (err == -1) {
 			g_free(fname);
-			fname = g_strconcat("DATADIR", "/grun/gassoc", NULL);
+			fname = g_strconcat(DATADIR, "/grun/gassoc", NULL);
 	}
 
 	fHnd = fopen(fname, "rb");
