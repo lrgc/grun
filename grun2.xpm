@@ -1,5 +1,5 @@
 /* XPM */
-static char * grun2[] = {
+static char * const grun2[] = {
 "48 48 256 2",
 "  	c None",
 ". 	c #040507",

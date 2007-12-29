@@ -21,6 +21,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <locale.h>
 
 #include "config.h"
 #include <unistd.h>
@@ -918,12 +919,8 @@ int main(int argc, char **argv) {
 	gtk_window_set_policy(GTK_WINDOW (win), FALSE, FALSE, FALSE);
 	gtk_widget_realize(win);
 	
-	/* Icon */
-	style = gtk_widget_get_style(win);
-	pix = gdk_pixmap_create_from_xpm_d(win->window, &mask, &style->bg[GTK_STATE_NORMAL], grun2);
-	gdk_window_set_icon(win->window, NULL, pix, mask);
-	g_free(pix);
-	g_free(mask);
+	gtk_window_set_icon(GTK_WINDOW(win), gdk_pixbuf_new_from_xpm_data(grun2));
+
 	gtk_widget_show(win);
 	gtk_main();
 	return 0;
