@@ -19,3 +19,5 @@ po/en@quot.po
 po/stamp-po
 *.gmo
 *.[oa]
+grun
+TAGS
