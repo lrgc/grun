@@ -58,10 +58,7 @@ struct grun {
 /* Function prototypes */
 
 int isFileX(const gchar *file);
-
-#ifdef ASSOC
 gchar *getAssoc(const gchar *ext);
-#endif /* ASSOC */
 
 char *getLine(FILE *file);
 int isFileExec(const gchar *file);
@@ -167,8 +164,10 @@ int isFileX(const gchar *file) {
 #endif /* TESTFILE */
 }
 
-#ifdef ASSOC
 gchar *getAssoc(const gchar *ext) {
+#ifndef ASSOC
+  return NULL;
+#else
 	FILE *fHnd;
 	gchar *line, *split, *fname, *rsp, *home_env;
 	struct stat buff;
@@ -205,8 +204,8 @@ gchar *getAssoc(const gchar *ext) {
 	}
 	fclose(fHnd);
 	return NULL;
+#endif /* ASSOC */
 }
-#endif
 
 int isFileExec(const gchar *file) {
 	int err;
@@ -217,41 +216,32 @@ int isFileExec(const gchar *file) {
 	hold = inc;
 	split = strsep(&inc, " ");
 
-	err = stat(split, &buff);
-	if (err == -1) {
-		twrk = getenv("PATH");
-		path = g_strdup(twrk);
-		inc = path;
-		twrk = strsep(&path, PATH_CHAR);
-		while (twrk) {
-			awrk = g_strconcat(twrk, DIR_CHAR, split, NULL);
-			err = stat(awrk, &buff);
-			g_free(awrk);
-			if (err != -1) {
-				g_free(hold);
-				g_free(inc);
-				if (buff.st_mode & S_IEXEC) {
-					return TRUE;
-				}
-				else {
-					return FALSE;
-				}
-			}
-			else {
-				twrk = strsep(&path, PATH_CHAR);
-			}
-		}
+	if (!stat(split, &buff)) {
+	  g_free(hold);
+	  return buff.st_mode & S_IEXEC ? TRUE : FALSE;
 	}
-	else {
-		g_free(hold);
-		if (buff.st_mode & S_IEXEC) {
-			return TRUE;
-		}
-		else {
-			return FALSE;
-		}
+
+	twrk = getenv("PATH");
+	path = g_strdup(twrk);
+	inc = path;
+	twrk = strsep(&path, PATH_CHAR);
+	
+	while (twrk) {
+	  awrk = g_strconcat(twrk, DIR_CHAR, split, NULL);
+	  err = stat(awrk, &buff);
+	  g_free(awrk);
+
+	  if (!err) {
+	    g_free(hold);
+	    g_free(inc);
+
+	    return buff.st_mode & S_IEXEC ? TRUE : FALSE;
+	  }
+
+	  twrk = strsep(&path, PATH_CHAR);
 	}
-	return -1;
+	
+	return -1; // File not found anywhere.
 }
 
 GList *loadHistory() {
@@ -322,34 +312,68 @@ void gquit() {
 	return;
 }
 
+/** Tries to fork and exec the command line passed as WORK.
+ * The command is executed as a grandchild of the current
+ * process. The intermediate child process exits immediately.
+ * This function returns only in the original parent process.
+ */
+void do_fork(const gchar * cmdline) {
+        gchar ** args;
+	gchar * twrk, * work;
+	int cnt, len, scnt;
+	gint pid = fork();
+
+	if (pid != 0) { // The main proces returns immediately
+	  return;
+	}
+
+	pid = fork();
+
+	if (pid == 0) {
+	  work = g_strdup(cmdline);
+	  len = strlen(work);
+	  scnt = 1;
+	  for (cnt = 0; cnt < len; cnt++) {
+	    if (work[cnt] == ' ') {
+	      scnt++;
+	    }
+	  }
+	  args = g_malloc(sizeof(char *) * (scnt + 1));
+	  args[scnt] = NULL;
+	  if (scnt == 1) {
+	    args[0] = g_strdup(work);
+	  }
+	  else {
+	    twrk = (char *) strsep(&work, " ");
+	    args[0] = twrk;
+	    cnt = 1;
+	    while (twrk) {
+	      twrk = (char *) strsep(&work, " ");
+	      args[cnt] = twrk;
+	      cnt++;
+	    }
+	    args[cnt] = work;
+	  }
+	  execvp(args[0], args);
+	}
+	
+	// The child process is just a helper and exits immediately.
+	// If the grandchild reaches here, it's because execvp failed,
+	// and so it exits, too.
+	_exit(0); 
+	
+}
+
 void startApp(const gchar *cmd, sgrun *gdat) {
 	char **args, *work, *twrk, *assoc, *hold, *split;
-	int cnt, len, scnt, pid, res;
+	int cnt, len, scnt, res;
 
 	res = isFileExec(cmd);
-	if (res == -1) {
-			if (gdat) {
-				if (!(gdat->status & 0x80)) {
-					g_list_free(gdat->history);
-					gtk_widget_destroy(gdat->win);
-				}
-			}
-			else {
-				exit(0);
-			}
-	}
-	else {
+	if (res != -1) {
 		if (res) {
-			res = isFileX(cmd);
-			if (res) {
-				work = g_strdup(cmd);
-			}
-			else {
-				work = g_strconcat(XTERM, " -e ", cmd, NULL);
-			}
+		  work =  isFileX(cmd) ? g_strdup(cmd) : g_strconcat(XTERM, " -e ", cmd, NULL);
 		}
 		else {
-#ifdef ASSOC
 			twrk = g_strdup(cmd);
 			hold = twrk;
 			split = strsep(&twrk, " ");
@@ -364,102 +388,38 @@ void startApp(const gchar *cmd, sgrun *gdat) {
 					work = g_strconcat(assoc, " ", cmd, NULL);
 					g_free(assoc);
 				}
-				else {
-					if (gdat) {
-						if (!(gdat->status & 0x80)) {
-							g_list_free(gdat->history);
-							gtk_widget_destroy(gdat->win);
-						}
-					}
-					else {
-						exit(0);
-					}
-				}
 			}
-			else {
-				if (gdat) {
-					if (!(gdat->status & 0x80)) {
-						g_list_free(gdat->history);
-						gtk_widget_destroy(gdat->win);
-					}
-				}
-				else {
-					exit(0);
-				}
-			}
-#else
-			if (gdat) {
-				if (!(gdat->status & 0x80)) {
-					g_list_free(gdat->history);
-					gtk_widget_destroy(gdat->win);
-				}
-			}
-			else {
-				exit(0);
-			}
-#endif
 		}
 	}
 
-	pid = fork();
-	if (pid == 0) {
-		pid = fork();
-		if (pid == 0) {
-			len = strlen(work);
-			scnt = 1;
-			for (cnt = 0; cnt < len; cnt++) {
-				if (work[cnt] == ' ') {
-					scnt++;
-				}
-			}
-			args = g_malloc(sizeof(char *) * (scnt + 1));
-			args[scnt] = NULL;
-			if (scnt == 1) {
-					args[0] = g_strdup(work);
-			}
-			else {
-				twrk = (char *) strsep(&work, " ");
-				args[0] = twrk;
-				cnt = 1;
-				while (twrk) {
-					twrk = (char *) strsep(&work, " ");
-					args[cnt] = twrk;
-					cnt++;
-				}
-				args[cnt] = work;
-			}
-			execvp(args[0], args);
-			_exit(0);
-		}
-		else {
-			_exit(0);
-		}
+	if (work) {
+	  do_fork(work);
 	}
-	else {
-		if (gdat) {
-			cnt = saveHistory(cmd, gdat);
-			if (gdat->status & 0x80) {
-				if (cnt) {
-					gdat->history = g_list_prepend(gdat->history, (gpointer) cmd);
-					gtk_combo_set_popdown_strings(GTK_COMBO (gdat->cmb), gdat->history);
-				}
-                                /* the order does matter here;
-                                   move the cursor first,
-                                   then select the region */
-				gtk_entry_set_position(GTK_ENTRY (GTK_COMBO (gdat->cmb)->entry), 0);
-				gtk_entry_select_region(GTK_ENTRY (GTK_COMBO (gdat->cmb)->entry), 0, -1);
-				gdat->cmdLen = 0;
-				gtk_signal_emit_stop_by_name(GTK_OBJECT ((GTK_COMBO (gdat->cmb))->entry), "key_press_event");
-			}
-			else {
-				g_list_free(gdat->history);
-				gtk_widget_destroy(gdat->win);
-			}
-		}
-		else {
-			_exit(0);
-		}
+
+	if (!gdat) {
+	  _exit(0);
 	}
+
+	cnt = saveHistory(cmd, gdat);
+
+	if ( ! (gdat->status & 0x80)) {
+	  g_list_free(gdat->history);
+	  gtk_widget_destroy(gdat->win);
+	  return;
+	}
+
+	if (cnt) {
+	  gdat->history = g_list_prepend(gdat->history, (gpointer) cmd);
+	  gtk_combo_set_popdown_strings(GTK_COMBO (gdat->cmb), gdat->history);
+	}
+
+	/* the order does matter here;
+	   move the cursor first,
+	   then select the region */
+	gtk_entry_set_position(GTK_ENTRY (GTK_COMBO (gdat->cmb)->entry), 0);
+	gtk_entry_select_region(GTK_ENTRY (GTK_COMBO (gdat->cmb)->entry), 0, -1);
+	gdat->cmdLen = 0;
+	gtk_signal_emit_stop_by_name(GTK_OBJECT ((GTK_COMBO (gdat->cmb))->entry), "key_press_event");
 }
 
 /* This function takes a command fragment and searches through
