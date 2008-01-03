@@ -6,7 +6,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: gRun 0.9.2\n"
-"POT-Creation-Date: 1999-02-06 15:28+0200\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2008-01-03 02:57+0000\n"
 "PO-Revision-Date: 2007-09-24 14:23-0500\n"
 "Last-Translator: Frédéric L.W.Meunier <linux@urbi.com.br>\n"
 "Language-Team: Frédéric L.W.Meunier <linux@urbi.com.br>\n"
@@ -14,11 +15,11 @@ msgstr ""
 "Content-Type: text/plain; charset=ISO-8859-1\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: grun.c:838
+#: grun.c:863
 msgid "Choose Application"
 msgstr "Escolher um aplicativo"
 
-#: grun.c:912
+#: grun.c:893
 msgid ""
 "gRun launches applications under X\n"
 "\n"
@@ -47,7 +48,7 @@ msgstr ""
 "\n"
 "Direitos autorais de Southern Gold Development 1998\n"
 
-#: grun.c:916
+#: grun.c:897
 #, c-format
 msgid ""
 "gRun version %s\n"
@@ -58,60 +59,60 @@ msgstr ""
 "\n"
 "Direitos autorais de Southern Gold Development 1998\n"
 
-#: grun.c:968 grun.c:969
+#: grun.c:945 grun.c:946
 #, c-format
 msgid "gRun %s"
 msgstr "gRun %s"
 
-#: grun.c:987
+#: grun.c:964
 msgid "Launch Application"
 msgstr "Executar um aplicativo"
 
-#: grun.c:1023
+#: grun.c:1003
 msgid "OK"
 msgstr "OK"
 
-#: grun.c:1027
+#: grun.c:1007
 msgid "Launch application"
 msgstr "Executar o aplicativo"
 
-#: grun.c:1027
+#: grun.c:1007
 msgid "The OK button launches the application given in the entry box"
 msgstr "O botão OK executa o aplicativo determinado na janela de entrada"
 
-#: grun.c:1031
+#: grun.c:1010
 msgid "Close"
 msgstr "Fechar"
 
-#: grun.c:1034
+#: grun.c:1013
 msgid "Cancel"
 msgstr "Cancelar"
 
-#: grun.c:1041
+#: grun.c:1019
 msgid "Close gRun"
 msgstr "Fechar gRun"
 
-#: grun.c:1041
+#: grun.c:1019
 msgid "The Close button will close the persistant gRun window"
 msgstr "O botão Fechar fecha a janela persistente de gRun"
 
-#: grun.c:1044
+#: grun.c:1022
 msgid "Cancel launch"
 msgstr "Cancelar a execução"
 
-#: grun.c:1044
+#: grun.c:1022
 msgid "The Cancel button cancels the launch process and closes gRun"
 msgstr "O botão Cancelar cancela a execução do programa e fecha gRun"
 
-#: grun.c:1048
+#: grun.c:1025
 msgid "Browse"
 msgstr "Navegar"
 
-#: grun.c:1052
+#: grun.c:1028
 msgid "Browse for command"
 msgstr "Navegar à procura de um comando"
 
-#: grun.c:1052
+#: grun.c:1028
 msgid ""
 "The Browse button opens a file selection box so the user can browse for the "
 "command to launch"
