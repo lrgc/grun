@@ -868,7 +868,7 @@ void browse(GtkWidget *widget, gpointer data) {
 }
 
 int main(int argc, char **argv) {
-	GtkWidget *win, *btn, *lbl, *cmb, *fix;
+        GtkWidget *win, *btn, *lbl, *cmb, *main_box, *button_box;
 	GtkTooltips *tips;
 	int c, cnt, len, persist, tooltips;
 	char *home_env, *fname, *cmd, *icmd;
@@ -946,7 +946,7 @@ int main(int argc, char **argv) {
 	sprintf(fname, gettext("gRun %s"), VERSION);
 	gtk_window_set_title(GTK_WINDOW(win), fname);
 	g_free(fname);
-	gtk_widget_set_usize(GTK_WIDGET(win), 250, 100);
+
 	gtk_signal_connect(GTK_OBJECT (win), "destroy", (GtkSignalFunc) gexit, NULL);
 	gtk_container_border_width(GTK_CONTAINER (win), 5);
 
@@ -958,12 +958,15 @@ int main(int argc, char **argv) {
 		gtk_tooltips_disable(tips);
 	}
 
-	fix = gtk_fixed_new();
-	gtk_container_add(GTK_CONTAINER(win), fix);
+	main_box = gtk_vbox_new(FALSE, 5);
+	gtk_container_add(GTK_CONTAINER(win), main_box);
 
 	lbl = gtk_label_new(gettext("Launch Application"));
-	gtk_fixed_put(GTK_FIXED (fix), lbl, 65, 4);
-	gtk_widget_show(lbl);
+        button_box = gtk_hbutton_box_new();
+
+	gtk_box_pack_start_defaults(GTK_BOX (main_box), lbl);
+	gtk_box_pack_end_defaults(GTK_BOX (main_box), button_box);
+
 
 	list = loadHistory();
 	gdat->history = list;
@@ -978,8 +981,9 @@ int main(int argc, char **argv) {
 	cmb = gtk_combo_new();
 	gdat->cmb = cmb;
 	gdat->rsp = NULL;
-	gtk_widget_set_usize(GTK_WIDGET (GTK_COMBO(cmb)->entry), 215, 24);
-	gtk_fixed_put(GTK_FIXED (fix), cmb, 5, 27);
+
+	gtk_box_pack_start_defaults(GTK_BOX (main_box), cmb);
+
 	if (list) {
 		gtk_combo_set_popdown_strings(GTK_COMBO (cmb), list);
 		gtk_entry_set_text(GTK_ENTRY (GTK_COMBO (cmb)->entry), list->data);
@@ -995,14 +999,12 @@ int main(int argc, char **argv) {
 	}
 	gtk_signal_connect(GTK_OBJECT (GTK_COMBO (cmb)->entry), "key_press_event", (GtkSignalFunc) gclick, (gpointer) gdat);
 	gtk_window_set_focus(GTK_WINDOW (win), GTK_COMBO (cmb)->entry);
-	gtk_widget_show(cmb);
 
 	btn = gtk_button_new_with_label(gettext("OK"));
-	gtk_widget_set_usize(GTK_WIDGET(btn), 70, 24);
-	gtk_fixed_put(GTK_FIXED (fix), btn, 5, 60);
+
+	gtk_box_pack_start_defaults(GTK_BOX (button_box), btn);
 	gtk_signal_connect(GTK_OBJECT (btn), "clicked", (GtkSignalFunc) launch, (gpointer) gdat);
 	gtk_tooltips_set_tip(tips, btn, gettext("Launch application"), gettext("The OK button launches the application given in the entry box"));
-	gtk_widget_show(btn);
 
 	if (persist) {
 		btn = gtk_button_new_with_label(gettext("Close"));
@@ -1011,8 +1013,7 @@ int main(int argc, char **argv) {
 		btn = gtk_button_new_with_label(gettext("Cancel"));
 	}
 
-	gtk_widget_set_usize(GTK_WIDGET(btn), 70, 24);
-	gtk_fixed_put(GTK_FIXED (fix), btn, 85, 60);
+	gtk_box_pack_start_defaults(GTK_BOX (button_box), btn);
 	gtk_signal_connect(GTK_OBJECT (btn), "clicked", (GtkSignalFunc) cancel, (gpointer) gdat);
 	if (persist) {
 		gtk_tooltips_set_tip(tips, btn, gettext("Close gRun"), gettext("The Close button will close the persistant gRun window"));
@@ -1020,22 +1021,18 @@ int main(int argc, char **argv) {
 	else {
 		gtk_tooltips_set_tip(tips, btn, gettext("Cancel launch"), gettext("The Cancel button cancels the launch process and closes gRun"));
 	}
-	gtk_widget_show(btn);
 
 	btn = gtk_button_new_with_label(gettext("Browse"));
-	gtk_widget_set_usize(GTK_WIDGET(btn), 70, 24);
-	gtk_fixed_put(GTK_FIXED (fix), btn, 165, 60);
+	gtk_box_pack_start_defaults(GTK_BOX (button_box), btn);
 	gtk_signal_connect(GTK_OBJECT (btn), "clicked", (GtkSignalFunc) browse, (gpointer) gdat);
 	gtk_tooltips_set_tip(tips, btn, gettext("Browse for command"), gettext("The Browse button opens a file selection box so the user can browse for the command to launch"));
-	gtk_widget_show(btn);
 
-	gtk_widget_show(fix);
 	gtk_window_set_policy(GTK_WINDOW (win), FALSE, FALSE, FALSE);
 	gtk_widget_realize(win);
 	
 	gtk_window_set_icon(GTK_WINDOW(win), gdk_pixbuf_new_from_xpm_data(grun2));
 
-	gtk_widget_show(win);
+	gtk_widget_show_all(win);
 	gtk_main();
 	return 0;
 }
