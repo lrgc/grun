@@ -1,3 +1,10 @@
+2008-01-12 Rodrigo Gallardo
+
+	* Release 0.9.3
+	This release includes most of the patches from the Debian package,
+	as well as a few extra cleanups. Please see the svn log for
+	details on each change.
+
 2007-12-17  Rodrigo Gallardo
 	* Remove WIN32 port code. I have not the experience, the tools, nor
 	the inclination to maintain it.
