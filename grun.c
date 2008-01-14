@@ -371,7 +371,13 @@ void startApp(const gchar *cmd, sgrun *gdat) {
 	res = isFileExec(cmd);
 	if (res != -1) {
 		if (res) {
-		  work =  isFileX(cmd) ? g_strdup(cmd) : g_strconcat(XTERM, " -e ", cmd, NULL);
+#ifdef TESTFILE
+		  work =  isFileX(cmd) ? 
+		    g_strdup(cmd) : 
+		    g_strconcat(XTERM, " -e ", cmd, NULL);
+#else
+		  work = g_strdup(cmd);
+#endif
 		}
 		else {
 			twrk = g_strdup(cmd);
