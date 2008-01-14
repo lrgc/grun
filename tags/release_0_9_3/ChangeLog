@@ -1,0 +1,147 @@
+2008-01-12 Rodrigo Gallardo
+
+	* Release 0.9.3
+	This release includes most of the patches from the Debian package,
+	as well as a few extra cleanups. Please see the svn log for
+	details on each change.
+	* gassoc and consfile are now installed to sysconfdir, as they are
+	customizable by the sysadmin.
+
+2007-12-17  Rodrigo Gallardo
+	* Remove WIN32 port code. I have not the experience, the tools, nor
+	the inclination to maintain it.
+
+2007-12-11  gettextize  <bug-gnu-gettext@gnu.org>
+
+	* Makefile.am (ACLOCAL_AMFLAGS): New variable.
+	(EXTRA_DIST): Add config.rpath, m4/ChangeLog.
+	* configure.ac (AC_OUTPUT): Remove command that created po/Makefile.
+
+4 February 1999
+	- Released version 0.9.2
+
+31 January 1999
+	- Switched over to gettext-0.10.35 for i18n support
+	- Ported ldf's to po files
+
+25 January 1999
+	- Added Spanish language definition file - Esteban Manchado
+
+21 January 1999
+	- Added Brazilian Portugese language definition file - Frédéric L.W.Meunier
+
+16 January 1999
+	- Fixed fatal bug in absolute path completion.
+	- Released version 0.9.1
+
+15 January 1999
+	- Added --preload parameter to specify default command
+
+14 January 1999
+	- Added German language definition file - Dominik Brettlacher
+
+12 January 1999
+	- Added absolute path command completion
+	- Fixed problem when using End and command completion
+	- Switched from g_malloc, strcpy, strcat to g_strconcat()
+	- Added French language definition file - Mathieu Lutfy
+
+11 January 1999
+	- Released version 0.8.1
+	- Released version 0.9.0 - development
+	- Created language definition header for English
+
+9 January 1999
+	- Fixed bug in parameter recognition code
+
+7 January 1999
+	- Persistant operation has Close button instead of Cancel + tooltips
+	- isFileX checks for a FQPN and splits off the last section if FQP
+
+4 January 1999
+	- Released version 0.8.0
+
+27 December 1998
+	- Released version 0.8pre1
+	- Added tooltips to command buttons
+
+21 December 1998
+	- Changed window type from GTK_WINDOW_DIALOG to GTK_WINDOW_TOPLEVEL
+	- Removed window positioning code
+
+17 December 1998
+	- Released version 0.7.4
+	- Added glocal gassoc and consfiles in share/grun
+
+16 December 1998
+	- Changed to version 0.7.4 internally
+	- Added file association feature
+	- Separated check if file is executable
+	- GUI check now accepts a XTERM define with multiple parameters
+
+14 December 1998
+	- Fixed malloc bug in main()
+	- Fixed gclick so keypad enter launches app as well
+
+13 December 1998
+	- Released version 0.7.3
+
+10 December 1998
+	- Changed to 0.7.3 internally
+	- Fixed bugs in Win32 code from persitance function
+
+9 December 1998
+	- Switched to config.h for #defines. Neater.
+
+8 December 1998
+	- Added feature to check if command is GUI or console
+		see file README section TESTFILE
+	- Added dialog persistance.
+	- Dropped short command line switches -v -h
+
+7 December 1998
+	- Reassigned Windows keys to match WinUI
+	- Solved autocomplete problem with Win, Gtk bug!!!
+	- Added selection of top-most item in history list
+	- Added icon - X Windows
+	- Checking event->length to confirm key type
+
+4 December 1998
+	- Removed "Program" label and extended combobox to
+		full width of window.
+	- Added workaround for Gtk 1.1.2 grab of GDK_Tab in
+		combobox (Escape key)
+
+3 December 1998
+	- Fixed faulty configure. Uses proper include paths
+	- Updated release file on geocities.com
+	- Moved dirent.h include into #ifdef #else #endif
+	- changed from if to switch in gclick
+	- fixed assertation errors in main()
+
+1 December 1998
+	- Released version 0.7.2
+	- Added command autocomplete from history
+	- Added command complete from system PATH
+
+29th November 1998
+	- Ported to Win32 by Troy Engel
+
+26th November 1998
+	- Released version 0.7.1
+	- Using GTK instead of Motif
+	- Implemented History Function
+	- Used fork()/execvp() combo
+	- Adjusted look to match Windows
+	- Changed name to grun
+
+15th June 1998
+	- Changed to version 0.7
+	- Fixed resizing on FSB
+	- Added command line launch
+
+19th October 1997
+	- Changed to version 0.3
+	- FSB works
+	- Launcher works
+	- Dialog style fixed

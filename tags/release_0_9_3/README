@@ -1,0 +1,56 @@
+gRun version 0.9.2 - (C) Southern Gold Development
+
+WARNING - This is a development tree. For a stable version, using
+	0.8.1
+
+Welcome to gRun, an advanced application launcher written in C and using
+GTK for the interface. gRun includes features such as a history, command
+completion from the history and from PATH, recognition of console mode
+applications and launching a terminal for them, file extension associations
+and a dual fork()/execvp() application launcher.
+
+gRun runs on Unix platforms, tested with GTK 2.12.
+
+The history mechanism is intelligent and only add commands that are new and
+which exist to the history. When gRun starts, the newest command in the
+history is loaded into the entry field and selected. As a command is typed
+into the entry field, gRun tries to find a match for the command in the
+history. If a match is found, the command is completed and the segment that
+is added is selected.
+
+By using --preload, the user can specify the command in the entry box on startup.
+This can be used for a menu situation.
+
+If the Tab key is pressed, gRun retrieves the PATH enviroment
+variable and searches the directories specified for a match. If one is found,
+the command is completed as for the autocomplete above.
+
+gRun has a mechanism for determining whether a command is a console mode
+application and launches a X-Term with the command as the -e parameter. This
+check is performed by searching for a match for the command in a list of console
+mode applications. This list is stored in the file .consfile in the home
+directory of the user and in /usr/local/share/grun/consfile for the global file.
+The global file is only used if no match is found in .consfile. To use this
+feature, which is not compiled by default, add the flags --enable-testfile and
+--with-default-xterm=xterm to the configure script. Use --with-default-xterm only
+if you want to change the X-Term from xterm to something else, like rxvt.
+
+gRun also implements a file extension association mechanism. If a command file is
+not executable, gRun searches through a association database, stored in .gassoc
+and /usr/local/share/grun/gassoc, for a match. If a match is found, gRun launches
+the application with the command as a parameter. This feature is not enabled by
+default and is switched on at compile time by adding the flag --enable-associations
+to the configure script. The comparison is case-insensitive, so JPG and jpg are
+matched to the same gassoc entry.
+
+The data files consfile and gassoc are small and may need to be extended on your
+system. If you find any general entries that you feel should be added to the release,
+please email me with the information.
+
+Internationalization is now carried out by using gettext and .po files. See LANGUAGES
+for more details.
+
+For full installation instructions, please read the file INSTALL.
+
+Bruce Smith <tangomanrulz@geocities.com>
+http://www.geocities.com/ResearchTriangle/Facility/1468/sg/index.html

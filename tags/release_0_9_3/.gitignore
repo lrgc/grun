@@ -1,0 +1,24 @@
+# Lines that start with '#' are comments.
+# Autotools files
+aclocal.m4
+autom4te.cache
+config.h.in
+config.h
+config.log
+config.status
+Makefile.in
+Makefile
+configure
+#
+# Files created during build
+stamp-h1
+po/en@boldquot.insert-header
+po/en@boldquot.po
+po/en@quot.insert-header
+po/en@quot.po
+po/remove-potcdate.sed
+po/stamp-po
+*.gmo
+*.[oa]
+grun
+TAGS
