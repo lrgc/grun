@@ -4,6 +4,8 @@
 	This release includes most of the patches from the Debian package,
 	as well as a few extra cleanups. Please see the svn log for
 	details on each change.
+	* gassoc and consfile are now installed to sysconfdir, as they are
+	customizable by the sysadmin.
 
 2007-12-17  Rodrigo Gallardo
 	* Remove WIN32 port code. I have not the experience, the tools, nor
