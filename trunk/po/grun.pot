@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: grun 0.9.3\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-01-03 02:57+0000\n"
+"POT-Creation-Date: 2008-01-14 00:10+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -16,11 +16,11 @@ msgstr ""
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: grun.c:863
+#: grun.c:869
 msgid "Choose Application"
 msgstr ""
 
-#: grun.c:893
+#: grun.c:899
 msgid ""
 "gRun launches applications under X\n"
 "\n"
@@ -36,7 +36,7 @@ msgid ""
 "Copyright Southern Gold Development 1998\n"
 msgstr ""
 
-#: grun.c:897
+#: grun.c:903
 #, c-format
 msgid ""
 "gRun version %s\n"
@@ -44,60 +44,60 @@ msgid ""
 "Copyright Southern Gold Development 1998\n"
 msgstr ""
 
-#: grun.c:945 grun.c:946
+#: grun.c:951 grun.c:952
 #, c-format
 msgid "gRun %s"
 msgstr ""
 
-#: grun.c:964
+#: grun.c:970
 msgid "Launch Application"
 msgstr ""
 
-#: grun.c:1003
+#: grun.c:1009
 msgid "OK"
 msgstr ""
 
-#: grun.c:1007
+#: grun.c:1013
 msgid "Launch application"
 msgstr ""
 
-#: grun.c:1007
+#: grun.c:1013
 msgid "The OK button launches the application given in the entry box"
 msgstr ""
 
-#: grun.c:1010
+#: grun.c:1016
 msgid "Close"
 msgstr ""
 
-#: grun.c:1013
+#: grun.c:1019
 msgid "Cancel"
 msgstr ""
 
-#: grun.c:1019
+#: grun.c:1025
 msgid "Close gRun"
 msgstr ""
 
-#: grun.c:1019
+#: grun.c:1025
 msgid "The Close button will close the persistant gRun window"
 msgstr ""
 
-#: grun.c:1022
+#: grun.c:1028
 msgid "Cancel launch"
 msgstr ""
 
-#: grun.c:1022
+#: grun.c:1028
 msgid "The Cancel button cancels the launch process and closes gRun"
 msgstr ""
 
-#: grun.c:1025
+#: grun.c:1031
 msgid "Browse"
 msgstr ""
 
-#: grun.c:1028
+#: grun.c:1034
 msgid "Browse for command"
 msgstr ""
 
-#: grun.c:1028
+#: grun.c:1034
 msgid ""
 "The Browse button opens a file selection box so the user can browse for the "
 "command to launch"
