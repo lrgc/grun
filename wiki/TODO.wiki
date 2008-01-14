@@ -1,6 +1,5 @@
 #summary Plans and projects
 #labels Featured
 
-  * Integrate all the changes that Debian has accumulated over the years.
-  * Remove support for win32. Sorry, but I have no expertise to maintain such code. If you want to see it stay, please step up and take care of it.
   * Modernize the code. There are several places where the design shows its age.
+  * Complete the port to a recent GTK+. We're still using several deprecated APIs.
