@@ -18,6 +18,7 @@
 
 #include <gtk/gtk.h>
 #include <gdk/gdkkeysyms.h>
+#include <glib.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -115,52 +116,59 @@ int isFileX(const gchar *file) {
 #ifndef TESTFILE
         return TRUE; // Ie, we'll consider everything an executable.
 #else
-	FILE *fHnd;
-	gchar *fname, *home_env, *line, *twrk, *hold, *split, *rdx;
+	FILE *fHnd = NULL;
 	struct stat buff;
 	int err;
-	
-	twrk = g_strdup(file);
-	hold = twrk;
-	split = strsep(&twrk, " ");
-	rdx = rindex(split, '/');
-	if (rdx) {
-		split = ++rdx;
-	}
 
-	home_env = getenv("HOME");
-	fname = g_strconcat(home_env, DIR_CHAR, DOT_CHAR, "consfile", NULL);
+	gint result = TRUE;
+
+	gchar *fname;
+	gchar *line;
+	gchar **split = NULL;
+	gchar **tokens = NULL;
+	gint n_tok;
+	
+	if (strcmp(file, "") == 0)
+	  goto exit;
+
+	split = g_strsplit(file, " ", 2);
+	tokens = g_strsplit(split[0], DIR_CHAR, 0);
+	n_tok = g_strv_length(tokens) - 1;
+
+	if (n_tok < 0)
+	  goto exit;
+
+	fname = g_strconcat(getenv("HOME"), DIR_CHAR, DOT_CHAR, "consfile", NULL);
 	
 	err = stat(fname, &buff);
 	if (err == -1) {
 			g_free(fname);
-			fname = g_strconcat(SYSCONFDIR, "/consfile", NULL);
+			fname = g_strconcat(SYSCONFDIR, DIR_CHAR, "consfile", NULL);
 	}
 
 	fHnd = fopen(fname, "rb");
 	g_free(fname);
 
 	if (!fHnd) {
-		return -1;
+	  goto exit;
 	}
-	line = getLine(fHnd);
-	if (!line) {
-		g_free(hold);
-		fclose(fHnd);
-		return TRUE;
-	}
-	while (line) {
-		if (strcmp(line, split) == 0) {
-			g_free(hold);
-			fclose(fHnd);
-			return FALSE;
+
+	while ((line = getLine(fHnd))) {
+		if (strcmp(line, tokens[n_tok]) == 0) {
+			g_free(line);
+			result = FALSE;
+			break;
 		}
 		g_free(line);
-		line = getLine(fHnd);
 	}
-	g_free(hold);
-	fclose(fHnd);
-	return TRUE;
+
+ exit:
+	g_strfreev(split);
+	g_strfreev(tokens);
+	if (fHnd)
+	  fclose(fHnd);
+
+	return result;
 #endif /* TESTFILE */
 }
 
@@ -169,7 +177,8 @@ gchar *getAssoc(const gchar *ext) {
   return NULL;
 #else
 	FILE *fHnd;
-	gchar *line, *split, *fname, *rsp, *home_env;
+	gchar *line, *fname, *rsp, *home_env;
+	gchar **split;
 	struct stat buff;
 	int err;
 
@@ -189,18 +198,17 @@ gchar *getAssoc(const gchar *ext) {
 		return NULL;
 	}
 
-	line = getLine(fHnd);
-	while (line) {
-		fname = line;
-		split = strsep(&line, ":");
-		if (strcasecmp(split, ext) == 0) {
-			rsp = g_strdup(line);
-			g_free(fname);
+	while ((line = getLine(fHnd))) {
+		split = g_strsplit(line, ":", 2);
+		if (strcasecmp(split[0], ext) == 0) {
+			rsp = g_strdup(split[0]);
+			g_free(line);
+			g_strfreev(split);
 			fclose(fHnd);
 			return rsp;
 		}
-		g_free(fname);
-		line = getLine(fHnd);
+		g_strfreev(split);
+		g_free(line);
 	}
 	fclose(fHnd);
 	return NULL;
@@ -209,38 +217,35 @@ gchar *getAssoc(const gchar *ext) {
 
 int isFileExec(const gchar *file) {
 	int err;
-	char *twrk, *awrk, *split, *hold, *path, *inc;
+	gchar *awrk;
+	gchar **split;
+	gchar **path;
+	int curr = -1;
 	struct stat buff;
 
-	inc = g_strdup(file);
-	hold = inc;
-	split = strsep(&inc, " ");
+	split = g_strsplit(file, " ", 2);
 
-	if (!stat(split, &buff)) {
-	  g_free(hold);
+	if (!stat(split[0], &buff)) {
+	  g_strfreev(split);
 	  return buff.st_mode & S_IEXEC ? TRUE : FALSE;
 	}
 
-	twrk = getenv("PATH");
-	path = g_strdup(twrk);
-	inc = path;
-	twrk = strsep(&path, PATH_CHAR);
+	path = g_strsplit(getenv("PATH"), PATH_CHAR, 0);
 	
-	while (twrk) {
-	  awrk = g_strconcat(twrk, DIR_CHAR, split, NULL);
+	while (path[++curr]) {
+	  awrk = g_strconcat(path[curr], DIR_CHAR, split[0], NULL);
 	  err = stat(awrk, &buff);
 	  g_free(awrk);
 
 	  if (!err) {
-	    g_free(hold);
-	    g_free(inc);
-
+	    g_strfreev(split);
+	    g_strfreev(path);
 	    return buff.st_mode & S_IEXEC ? TRUE : FALSE;
 	  }
-
-	  twrk = strsep(&path, PATH_CHAR);
 	}
-	
+
+	g_strfreev(split);
+	g_strfreev(path);
 	return -1; // File not found anywhere.
 }
 
@@ -319,8 +324,6 @@ void gquit() {
  */
 void do_fork(const gchar * cmdline) {
         gchar ** args;
-	gchar * twrk, * work;
-	int cnt, len, scnt;
 	gint pid = fork();
 
 	if (pid != 0) { // The main proces returns immediately
@@ -330,30 +333,7 @@ void do_fork(const gchar * cmdline) {
 	pid = fork();
 
 	if (pid == 0) {
-	  work = g_strdup(cmdline);
-	  len = strlen(work);
-	  scnt = 1;
-	  for (cnt = 0; cnt < len; cnt++) {
-	    if (work[cnt] == ' ') {
-	      scnt++;
-	    }
-	  }
-	  args = g_malloc(sizeof(char *) * (scnt + 1));
-	  args[scnt] = NULL;
-	  if (scnt == 1) {
-	    args[0] = g_strdup(work);
-	  }
-	  else {
-	    twrk = (char *) strsep(&work, " ");
-	    args[0] = twrk;
-	    cnt = 1;
-	    while (twrk) {
-	      twrk = (char *) strsep(&work, " ");
-	      args[cnt] = twrk;
-	      cnt++;
-	    }
-	    args[cnt] = work;
-	  }
+	  args = g_strsplit_set(cmdline, " ", 0);
 	  execvp(args[0], args);
 	}
 	
@@ -365,7 +345,8 @@ void do_fork(const gchar * cmdline) {
 }
 
 void startApp(const gchar *cmd, sgrun *gdat) {
-	char **args, *work, *twrk, *assoc, *hold, *split;
+        char **args, **split1;
+        char *work = NULL, *assoc, *split;;
 	int cnt, len, scnt, res;
 
 	res = isFileExec(cmd);
@@ -380,21 +361,18 @@ void startApp(const gchar *cmd, sgrun *gdat) {
 #endif
 		}
 		else {
-			twrk = g_strdup(cmd);
-			hold = twrk;
-			split = strsep(&twrk, " ");
-			twrk = g_strdup(split);
-			g_free(hold);
-			split = rindex(twrk, '.');
+                        split1 = g_strsplit(cmd, " ", 2);
+			split = rindex(split1[0], '.');
 			if (split) {
 				split++;
 				assoc = getAssoc(split);
-				g_free(twrk);
+
 				if (assoc) {
 					work = g_strconcat(assoc, " ", cmd, NULL);
 					g_free(assoc);
 				}
 			}
+			g_strfreev(split1);
 		}
 	}
 
@@ -464,27 +442,30 @@ gint gcomplete(sgrun *gdat, const gchar *twrk, gint oldpos) {
 
 gint gdircomplete(sgrun *gdat, const gchar *twrk, gint oldpos) {
 	DIR *dir;
-	gchar *path, *inc, *wdir, *hold;
+	gchar *path, *inc;
+        gchar **split_path;
+	gint path_len;
 	struct dirent *file;
 	struct stat buf;
-	gint pos, len, err;
+	gint pos, len, err, i;
 
 	pos = strlen(twrk);
-	inc = getenv("PATH");
-	path = g_strdup(inc);
-	hold = path;
-	if (strlen(path) < 1) {
-          g_free(hold);
+	path = getenv("PATH"); 
+
+	if (path == NULL || strlen(path) < 1) {
 		return FALSE;
 	}
-	wdir = strsep(&path, PATH_CHAR);
-	while (wdir) {
-		dir = opendir(wdir);
+
+	split_path = g_strsplit(path, PATH_CHAR, 0);
+	path_len = g_strv_length(split_path);
+
+	for (i = 0; i < path_len; i++) {
+		dir = opendir(split_path[i]);
 		if (dir) {
 			file = readdir(dir);
 			while (file) {
 				if (strncmp(twrk, file->d_name, pos) == 0) {
-					inc = g_strconcat(wdir, DIR_CHAR, file->d_name, NULL);
+					inc = g_strconcat(split_path[i], DIR_CHAR, file->d_name, NULL);
 					err = stat(inc, &buf);
 					g_free(inc);
 					if ((err == 0) && (buf.st_mode & S_IEXEC)) {
@@ -494,7 +475,7 @@ gint gdircomplete(sgrun *gdat, const gchar *twrk, gint oldpos) {
 						gtk_entry_set_position(GTK_ENTRY ((GTK_COMBO (gdat->cmb))->entry), pos);
                                                 gtk_signal_emit_stop_by_name(GTK_OBJECT ((GTK_COMBO (gdat->cmb))->entry), "key_press_event");
 						closedir(dir);
-						g_free(hold);
+						g_strfreev(split_path);
 						return TRUE;
 					}
 				}
@@ -502,10 +483,7 @@ gint gdircomplete(sgrun *gdat, const gchar *twrk, gint oldpos) {
 			}
 			closedir(dir);
 		}
-		wdir = strsep(&path, PATH_CHAR);
 	}
-
-                g_free(hold);
 
                 /*
                   discard the result of previous auto-completion
@@ -514,20 +492,13 @@ gint gdircomplete(sgrun *gdat, const gchar *twrk, gint oldpos) {
                 if (pos <= oldpos)
                   return FALSE;
 
-	inc = getenv("PATH");
-	path = g_strdup(inc);
-	hold = path;
-	if (strlen(path) < 1) {
-		return FALSE;
-	}
-	wdir = strsep(&path, PATH_CHAR);
-	while (wdir) {
-		dir = opendir(wdir);
+	for (i = 0; i < path_len; i++) {
+		dir = opendir(split_path[i]);
 		if (dir) {
 			file = readdir(dir);
 			while (file) {
 				if (strncmp(twrk, file->d_name, oldpos) == 0) {
-					inc = g_strconcat(wdir, DIR_CHAR, file->d_name, NULL);
+					inc = g_strconcat(split_path[i], DIR_CHAR, file->d_name, NULL);
 					err = stat(inc, &buf);
 					g_free(inc);
 					if ((err == 0) && (buf.st_mode & S_IEXEC)) {
@@ -536,7 +507,7 @@ gint gdircomplete(sgrun *gdat, const gchar *twrk, gint oldpos) {
                                           gtk_editable_set_position(GTK_EDITABLE ((GTK_COMBO (gdat->cmb))->entry), -1);
                                           gtk_signal_emit_stop_by_name(GTK_OBJECT ((GTK_COMBO (gdat->cmb))->entry), "key_press_event");
 						closedir(dir);
-						g_free(hold);
+						g_strfreev(split_path);
 						return TRUE;
 					}
 				}
@@ -544,9 +515,9 @@ gint gdircomplete(sgrun *gdat, const gchar *twrk, gint oldpos) {
 			}
 			closedir(dir);
 		}
-		wdir = strsep(&path, PATH_CHAR);
 	}
-	g_free(hold);
+
+	g_strfreev(split_path);
 	return FALSE;
 }
 
