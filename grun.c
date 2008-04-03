@@ -345,9 +345,9 @@ void do_fork(const gchar * cmdline) {
 }
 
 void startApp(const gchar *cmd, sgrun *gdat) {
-        char **args, **split1;
-        char *work = NULL, *assoc, *split;;
-	int cnt, len, scnt, res;
+        char **split1;
+        char *work = NULL, *assoc, *split;
+	int cnt, res;
 
 	res = isFileExec(cmd);
 	if (res != -1) {
@@ -847,13 +847,10 @@ void browse(GtkWidget *widget, gpointer data) {
 int main(int argc, char **argv) {
         GtkWidget *win, *btn, *lbl, *cmb, *main_box, *button_box;
 	GtkTooltips *tips;
-	int c, cnt, len, persist, tooltips;
+	int c, len, persist, tooltips;
 	char *home_env, *fname, *cmd, *icmd;
 	GList *list;
 	sgrun *gdat;
-	GdkPixmap *pix;
-	GdkBitmap *mask;
-	GtkStyle *style;
 
 	gtk_init(&argc, &argv);
 	setlocale (LC_ALL, "");
