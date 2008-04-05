@@ -847,8 +847,8 @@ void browse(GtkWidget *widget, gpointer data) {
 int main(int argc, char **argv) {
         GtkWidget *win, *btn, *lbl, *cmb, *main_box, *button_box;
 	GtkTooltips *tips;
-	int c, len, persist, tooltips;
-	char *home_env, *fname, *cmd, *icmd;
+	int c, persist, tooltips;
+	char *home_env, *fname, *icmd;
 	GList *list;
 	sgrun *gdat;
 
@@ -857,17 +857,23 @@ int main(int argc, char **argv) {
 	bindtextdomain (PACKAGE, LOCALEDIR);
 	textdomain (PACKAGE);
  
-/* New parameter scan routine, checks all parameters */
+	/* New parameter scan routine, checks all parameters */
 	persist = FALSE;
 	tooltips = TRUE;
 	icmd = NULL;
 	if (argc > ARG_BASE) {
+
+		if (argv[1][0] != '-') {
+			startApp(g_strjoinv(" ", (argv + 1)), NULL);
+			/* startApp( ..., NULL) doesn't return. */
+		}
+
 		for (c = ARG_BASE; c < argc; c++) {
-			if ((strcmp(argv[c], "--help") == 0) && (argv[1][0] == '-')) {
+			if (strcmp(argv[c], "--help") == 0 ) {
 				g_print(gettext("gRun launches applications under X\n\nUsage grun [options] [file options]\n\n   file options     Launch file directly, no dialog boxes\n   --persist        Dialog persistance\n   --preload file   Load file as default command\n   --notips         Disable tooltips\n   --version        Show version\n   --help           Show this guide \n\nCopyright Southern Gold Development 1998\n"));
 				exit(0);
 			}
-			if ((strcmp(argv[c], "--version") == 0) && (argv[1][0] == '-')) {
+			if (strcmp(argv[c], "--version") == 0) {
 				g_print(gettext("gRun version %s\n\nCopyright Southern Gold Development 1998\n"), VERSION);
 				exit(0);
 			}
@@ -879,22 +885,8 @@ int main(int argc, char **argv) {
 			}
 			if (strcmp(argv[c], "--preload") == 0) {
 			        icmd = g_strjoinv(" ", (argv + c + 1));
-				break; /* We've consumed all remaining args */
+				break; /* We consume all remaining args */
 			}
-		}
-			
-		if (argv[1][0] != '-') {
-			len = 0;
-			for (c = 1; c < argc; c++) {
-				len += strlen(argv[c]) + 1;
-			}
-			cmd = g_malloc0(sizeof(gchar) * (len + 1));
-			for (c = 1; c < argc; c++) {
-				strcat(cmd, argv[c]);
-				strcat(cmd, " ");
-			}
-			cmd[len - 1] = '\0';
-			startApp(cmd, NULL);
 		}
 	}
 
