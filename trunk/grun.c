@@ -878,17 +878,8 @@ int main(int argc, char **argv) {
 				tooltips = FALSE;
 			}
 			if (strcmp(argv[c], "--preload") == 0) {
-				c++;
-				icmd = g_malloc0(sizeof(gchar) * 1);
-				while (c < argc) {
-						cmd = g_strconcat(icmd, " ", argv[c], NULL);
-						g_free(icmd);
-						icmd = cmd;
-						c++;
-				}
-				cmd = icmd + 1;
-				g_free(icmd);
-				icmd = g_strdup(cmd);
+			        icmd = g_strjoinv(" ", (argv + c + 1));
+				break; /* We've consumed all remaining args */
 			}
 		}
 			
