@@ -1,5 +1,7 @@
 2008-04-04  Luis Rodrigo Gallardo Cruz  <rodrigo@nul-unu.com>
 
+	* po/sv.po: Swedish translation by Daniel Nylander, from Debian
+	bug #348254.
 	* po/de.po: Corrected bad othography. Thanks Jens Seidel. Closes
 	Debian #313760
 	* po/: Refresh pot and po files for line numbering changes.
