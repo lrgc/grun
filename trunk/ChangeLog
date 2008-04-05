@@ -1,3 +1,9 @@
+2008-04-04  Luis Rodrigo Gallardo Cruz  <rodrigo@nul-unu.com>
+
+	* po/de.po: Corrected bad othography. Thanks Jens Seidel. Closes
+	Debian #313760
+	* po/: Refresh pot and po files for line numbering changes.
+
 2008-01-12 Rodrigo Gallardo
 
 	* Release 0.9.3
