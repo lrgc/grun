@@ -1,0 +1,120 @@
+# Swedish translation of gRun.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the grun package.
+# Daniel Nylander <po@danielnylander.se>, 2006.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: grun 0.9.2-14\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2008-04-04 16:26+0000\n"
+"PO-Revision-Date: 2006-01-16 00:13+0100\n"
+"Last-Translator: Daniel Nylander <po@danielnylander.se>\n"
+"Language-Team: Swedish <tp-sv@listor.tp-sv.se>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=iso-8859-1\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: grun.c:840
+msgid "Choose Application"
+msgstr "Välj program"
+
+#: grun.c:867
+msgid ""
+"gRun launches applications under X\n"
+"\n"
+"Usage grun [options] [file options]\n"
+"\n"
+"   file options     Launch file directly, no dialog boxes\n"
+"   --persist        Dialog persistance\n"
+"   --preload file   Load file as default command\n"
+"   --notips         Disable tooltips\n"
+"   --version        Show version\n"
+"   --help           Show this guide \n"
+"\n"
+"Copyright Southern Gold Development 1998\n"
+msgstr ""
+"gRun startar program under X\n"
+"\n"
+"Användning: grun [flaggor] [filalternativ]\n"
+"\n"
+"   file options     Starta fil direkt, inga dialogrutor\n"
+"   --persist        Dialog\n"
+"   --preload fil    Läs in fil som förvalt kommando\n"
+"   --notips         Stäng av verktygstips\n"
+"   --version        Visa version\n"
+"   --help           Visa den här hjälpen \n"
+"\n"
+"Copyright Southern Gold Development 1998\n"
+
+#: grun.c:871
+#, c-format
+msgid ""
+"gRun version %s\n"
+"\n"
+"Copyright Southern Gold Development 1998\n"
+msgstr ""
+"gRun version %s\n"
+"\n"
+"Copyright Southern Gold Development 1998\n"
+
+#: grun.c:919 grun.c:920
+#, c-format
+msgid "gRun %s"
+msgstr "gRun %s"
+
+#: grun.c:938
+msgid "Launch Application"
+msgstr "Starta program"
+
+#: grun.c:977
+msgid "OK"
+msgstr "OK"
+
+#: grun.c:981
+msgid "Launch application"
+msgstr "Starta program"
+
+#: grun.c:981
+msgid "The OK button launches the application given in the entry box"
+msgstr "OK-knappen startar programmet som angivits i rutan"
+
+#: grun.c:984
+msgid "Close"
+msgstr "Stäng"
+
+#: grun.c:987
+msgid "Cancel"
+msgstr "Avbryt"
+
+#: grun.c:993
+msgid "Close gRun"
+msgstr "Stäng gRun"
+
+#: grun.c:993
+msgid "The Close button will close the persistant gRun window"
+msgstr "Stäng-knappen kommer att stänga gRun-fönstret"
+
+#: grun.c:996
+msgid "Cancel launch"
+msgstr "Avbryt start"
+
+#: grun.c:996
+msgid "The Cancel button cancels the launch process and closes gRun"
+msgstr "Avbryt-knappen avbryter startprocessen och stänger gRun"
+
+#: grun.c:999
+msgid "Browse"
+msgstr "Bläddra"
+
+#: grun.c:1002
+msgid "Browse for command"
+msgstr "Bläddra efter kommando"
+
+#: grun.c:1002
+msgid ""
+"The Browse button opens a file selection box so the user can browse for the "
+"command to launch"
+msgstr ""
+"Bläddra-knappen öppnar en filväljare så att användaren kan bläddra efter "
+"kommandon att starta"
