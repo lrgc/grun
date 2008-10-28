@@ -856,7 +856,8 @@ int main(int argc, char **argv) {
 	setlocale (LC_ALL, "");
 	bindtextdomain (PACKAGE, LOCALEDIR);
 	textdomain (PACKAGE);
- 
+        bind_textdomain_codeset(PACKAGE, "UTF-8");
+
 	/* New parameter scan routine, checks all parameters */
 	persist = FALSE;
 	tooltips = TRUE;
