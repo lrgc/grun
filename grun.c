@@ -988,7 +988,7 @@ int main(int argc, char **argv) {
 	gtk_window_set_policy(GTK_WINDOW (win), FALSE, FALSE, FALSE);
 	gtk_widget_realize(win);
 	
-	gtk_window_set_icon(GTK_WINDOW(win), gdk_pixbuf_new_from_xpm_data(grun2));
+	gtk_window_set_icon(GTK_WINDOW(win), gdk_pixbuf_new_from_xpm_data((const char **) grun2));
 
 	gtk_widget_show_all(win);
 	gtk_main();
